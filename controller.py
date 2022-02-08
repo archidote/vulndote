@@ -1,0 +1,1 @@
+urlAPI="https://cve.circl.lu/api/"
