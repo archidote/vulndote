@@ -4,6 +4,7 @@ import os
 oldURLApi = "https://cve.circl.lu/api/"
 vulndoteUser = os.environ.get('vulndoteUser')
 vulndotePassword = os.environ.get('vulndotePassword')
+telegramBotToken= os.environ.get('telegramBotToken')
 
 # print (vulndoteUser)
 # print (vulndotePassword)

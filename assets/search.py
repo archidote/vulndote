@@ -1,12 +1,17 @@
 import requests
-from controller import *
 
+urlAPI = "https://cve.circl.lu/api/"
 
 def cveSearch(cveCode) :
-    url = urlAPI+"/cve/"+cveCode
+    
+    url = urlAPI+"cve/"+cveCode
+    
+    print (url)
 
     resp = requests.get(url=url)
     data = resp.json() 
+    
+    print (data)
     
     if data == None:
         cve="No CVE is attached to this CVE code."
@@ -22,7 +27,7 @@ def cveSearch(cveCode) :
 
 def impact(cvecode) :
 
-    url = urlAPI+"/cve/"+cvecode
+    url = urlAPI+"cve/"+cvecode
     resp = requests.get(url=url)
     data = resp.json() 
     
@@ -36,7 +41,7 @@ def impact(cvecode) :
 
 def access(cveCode) : 
     
-    url = urlAPI+"/cve/"+cveCode
+    url = urlAPI+"cve/"+cveCode
     resp = requests.get(url=url)
     data = resp.json() 
     
@@ -50,7 +55,7 @@ def access(cveCode) :
 
 def reference(cveCode) : 
     
-    url = urlAPI+"/cve/"+cveCode
+    url = urlAPI+"cve/"+cveCode
     resp = requests.get(url=url)
     data = resp.json() 
     
@@ -64,7 +69,7 @@ def reference(cveCode) :
 
 def ConfigurationAffectedByTheVuln(cveCode) :
     
-    url = oldURLApi+"/cve/"+cveCode
+    url = urlAPI+"cve/"+cveCode
 
     resp = requests.get(url=url)
     data = resp.json() 
@@ -96,7 +101,7 @@ CPE : Common Platform Enumeration
     """
     return terms
 
-# print (cveSearch("CVE-2021-4034"))
+# print (cveSearch("CVE-2021-39994"))
 # print (impact("CVE-2021-4034"))
 # print (access("CVE-2021-4034"))
 # print (reference("CVE-2021-4034"))
