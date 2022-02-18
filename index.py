@@ -1,7 +1,7 @@
 import telebot
 from telebot import *
 from time import time 
-from assets.search import * 
+#from assets.search import * 
 from todayCVE import * 
 from controller import * 
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -14,6 +14,12 @@ bot = telebot.TeleBot(telegramBotToken, parse_mode=None)
 def send_welcome(message):
 	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 	bot.reply_to(message, "Hey "+message.from_user.first_name+"👋 Welcome to vulndote bot ! tap /help to know supported command 😊", reply_markup=markup)
+ 
+@bot.message_handler(commands=['cve'])
+def send_welcome(message):
+	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+	markup = telebot.types.ForceReply()
+	bot.reply_to(message, "Enter a CVE code :", reply_markup=markup)
 
 @bot.message_handler(commands=['cve_today_vendor_product'])
 def send_welcome(message):
@@ -33,12 +39,15 @@ def send_welcome(message):
 @bot.message_handler(func=lambda m: True)
 def which_reply(message):
 	if message.reply_to_message == None : 
-		bot.reply_to(message, cveSearch(message.text))
+		bot.reply_to(message, "HELP")
 	else :
-		if message.reply_to_message.text == "Enter a Vendor/Product" : # Warning, here the sentence must be the same that the previous one for the answser context !!!
+		if message.reply_to_message.text == "Enter a CVE code :" : 
 			markup = InlineKeyboardMarkup()
-			bot.reply_to(message, cveTodaySortedByVendor(message.text), reply_markup=markup)
-		elif message.reply_to_message.text == "eEnter a Vendor :" : # Warning, here the sentence must be the same that the previous one for the answser context !!!
+			bot.reply_to(message, cveSearch(message.text), reply_markup=markup,parse_mode="html")
+		if message.reply_to_message.text == "Enter a Vendor/Product" :
+			markup = InlineKeyboardMarkup()
+			bot.reply_to(message, cveTodaySortedByVendor(message.text), reply_markup=markup,parse_mode="html")
+		elif message.reply_to_message.text == "eEnter a Vendor :" : 
 			markup = InlineKeyboardMarkup()
 			b1 = InlineKeyboardButton(text='Critical', callback_data = 'Critical')
 			b2 = InlineKeyboardButton(text='High', callback_data = 'High')
@@ -51,16 +60,16 @@ def which_reply(message):
 def callback_inline(call):
 
 	if call.data == "Critical":
-		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"Critical"), reply_markup=call.message.reply_markup)
-		bot.answer_callback_query(call.id, " Loading ... ")
+		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"Critical"), reply_markup=call.message.reply_markup,parse_mode="html")
+		bot.answer_callback_query(call.id, " Loading... ")
 	if call.data == "High":
-		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"High"), reply_markup=call.message.reply_markup)
+		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"High"), reply_markup=call.message.reply_markup,parse_mode="html")
 		bot.answer_callback_query(call.id, "Loading...")
 	if call.data == "Medium":
-		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"Medium"), reply_markup=call.message.reply_markup)
+		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"Medium"), reply_markup=call.message.reply_markup,parse_mode="html")
 		bot.answer_callback_query(call.id, "Loading...")
 	if call.data == "Low":
-		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"Low"), reply_markup=call.message.reply_markup)
+		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"Low"), reply_markup=call.message.reply_markup,parse_mode="html")
 		bot.answer_callback_query(call.id, "Loading...")
 
 bot.infinity_polling() # Bot Exec

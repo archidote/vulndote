@@ -3,25 +3,33 @@ from controller import *
 from datetime import datetime
 from datetime import timezone
 
+from functions import *
+
 def cveTodaySortedByVendor(vendor) :  
     
     response = session.get('https://www.opencve.io/api/cve?vendor='+vendor)
-    
     data = response.json() 
 
-    today = now = datetime.now()
-    today = now.strftime("%Y-%m-%d")
     
-    cve = ""
-    for i in range(len(data)):
-        if today in formatDate(data[i]["updated_at"]):
-            cve += "CVE ID : "+data[i]["id"]+"\n"
-            cve += "Summary : "+data[i]["summary"]+"\n"
-            cve += "Published/Updated : "+data[i]["updated_at"]+"\n\n"
-    if cve : # IF cve variable is not empty 
-        return cve  
+    if "message" in data : 
+        return "Vendor/Product has'nt been found."
+        
     else : 
-        return "No CVE"
+
+        today = now = datetime.now()
+        today = now.strftime("%Y-%m-%d")
+        
+        cve = ""
+        for i in range(len(data)):
+            if today in formatDate(data[i]["updated_at"]):
+                cve += "<b>CVE ID</b> : "+data[i]["id"]+"\n"
+                cve += "<b>CVSS</b> : "+cvssScale((data[i]["id"]))+"\n"
+                cve += "<b>Summary</b> : "+data[i]["summary"]+"\n"
+                cve += "<b>Published/Updated</b> : "+data[i]["updated_at"]+"\n\n"
+        if cve : # IF cve variable is not empty 
+            return cve  
+        else : 
+            return "No CVE"
 
 def cveTodaySortedByCVSS(cvss) :  
     
@@ -34,31 +42,37 @@ def cveTodaySortedByCVSS(cvss) :
     
     cve = ""
     for i in range(len(data)):
-        if today == formatDate(data[i]["updated_at"]):
-            cve += "CVE ID : "+data[i]["id"]+"\n"
-            cve += "Summary : "+data[i]["summary"]+"\n"
-            cve += "Published/Updated :"+data[i]["updated_at"]+"\n\n"
-    return cve  
+        if today in formatDate(data[i]["updated_at"]):
+            cve += "<b>CVE ID</b> : "+data[i]["id"]+"\n"
+            cve += "<b>Summary</b> : "+data[i]["summary"]+"\n"
+            cve += "<b>Published/Updated</b> : "+data[i]["updated_at"]+"\n\n"
+    if cve : # IF cve variable is not empty 
+        return cve  
+    else : 
+        return "No CVE Today is registered with this level of threat : "+cvss+""
 
 def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok 
     
     response = session.get('https://www.opencve.io/api/cve?vendor='+vendor+'&cvss='+cvss+'')
-    
     data = response.json() 
-
-    today = now = datetime.now()
-    today = now.strftime("%Y-%m-%d")
     
-    cve = ""
-    for i in range(len(data)):
-        if today in formatDate(data[i]["updated_at"]):
-            cve += "CVE ID : "+data[i]["id"]+"\n"
-            cve += "Summary : "+data[i]["summary"]+"\n"
-            cve += "Published/Updated : "+data[i]["updated_at"]+"\n\n"
-    if cve : # IF cve variable is not empty 
-        return cve  
+    if "message" in data : 
+        return "Vendor/Product has'nt been found."
     else : 
-        return "No CVE Today is registered for "+vendor+" with this level of threat : "+cvss+""
+        today = now = datetime.now()
+        today = now.strftime("%Y-%m-%d")
+
+        cve = ""
+        for i in range(len(data)):
+            if today in formatDate(data[i]["updated_at"]):
+                cve += "<b>CVE ID</b> : "+data[i]["id"]+"\n"
+                cve += "<b>CVSS</b> : "+cvssScale((data[i]["id"]))+"\n"
+                cve += "<b>Summary</b> : "+data[i]["summary"]+"\n"
+                cve += "<b>Published/Updated</b> : "+data[i]["updated_at"]+"\n\n"
+        if cve : # IF cve variable is not empty 
+            return cve  
+        else : 
+            return "No CVE Today is registered for "+vendor+" with this level of threat : "+cvss+""
 
 def cveTodayNotSorted() :  
     
