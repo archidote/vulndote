@@ -40,7 +40,7 @@ def cveTodaySortedByCVSS(cvss) :
             cve += "Published/Updated :"+data[i]["updated_at"]+"\n\n"
     return cve  
 
-def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  
+def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok 
     
     response = session.get('https://www.opencve.io/api/cve?vendor='+vendor+'&cvss='+cvss+'')
     
@@ -51,11 +51,14 @@ def cveTodaySortedByVendorAndCVSS(vendor,cvss) :
     
     cve = ""
     for i in range(len(data)):
-        if today == formatDate(data[i]["updated_at"]):
+        if today in formatDate(data[i]["updated_at"]):
             cve += "CVE ID : "+data[i]["id"]+"\n"
             cve += "Summary : "+data[i]["summary"]+"\n"
-            cve += "Published/Updated :"+data[i]["updated_at"]+"\n\n"
-    return cve  
+            cve += "Published/Updated : "+data[i]["updated_at"]+"\n\n"
+    if cve : # IF cve variable is not empty 
+        return cve  
+    else : 
+        return "No CVE Today is registered for "+vendor+" with this level of threat : "+cvss+""
 
 def cveTodayNotSorted() :  
     
@@ -83,4 +86,4 @@ def formatDate(rawDate) :
 # print (cveTodaySortedByVendor("microsoft"))
 # print (cveTodaySortedByCVSS("critical"))
 # print (cveTodayNotSorted())
-# print (cveTodaySortedByVendorAndCVSS("Linux","Low"))
+# print (cveTodaySortedByVendorAndCVSS("Microsoft","Low"))
