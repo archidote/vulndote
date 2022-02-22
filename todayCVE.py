@@ -10,7 +10,6 @@ def cveTodaySortedByVendor(vendor) :
     response = session.get('https://www.opencve.io/api/cve?vendor='+vendor)
     data = response.json() 
 
-    
     if "message" in data : 
         return "Vendor/Product has'nt been found."
         
@@ -22,10 +21,10 @@ def cveTodaySortedByVendor(vendor) :
         cve = ""
         for i in range(len(data)):
             if today in formatDate(data[i]["updated_at"]):
-                cve += "<b>CVE ID</b> : "+data[i]["id"]+"\n"
-                cve += "<b>CVSS</b> : "+cvssScale((data[i]["id"]))+"\n"
-                cve += "<b>Summary</b> : "+data[i]["summary"]+"\n"
-                cve += "<b>Published/Updated</b> : "+data[i]["updated_at"]+"\n\n"
+                cve += "**CVE ID** : "+data[i]["id"]+"\n"
+                cve += "*CVSS* : "+cvssScale((data[i]["id"]))+"\n"
+                cve += "*Summary* : "+data[i]["summary"]+"\n"
+                cve += "*Published/Updated* : "+data[i]["updated_at"]+"\n\n"
         if cve : # IF cve variable is not empty 
             return cve  
         else : 
@@ -43,13 +42,14 @@ def cveTodaySortedByCVSS(cvss) :
     cve = ""
     for i in range(len(data)):
         if today in formatDate(data[i]["updated_at"]):
-            cve += "<b>CVE ID</b> : "+data[i]["id"]+"\n"
-            cve += "<b>Summary</b> : "+data[i]["summary"]+"\n"
-            cve += "<b>Published/Updated</b> : "+data[i]["updated_at"]+"\n\n"
+            cve += "*CVE ID* : "+data[i]["id"]+"\n"
+            cve += "*CVSS* : "+cvssScale((data[i]["id"]))+"\n"
+            cve += "*Summary* : "+data[i]["summary"]+"\n"
+            cve += "*Published/Updated* : "+data[i]["updated_at"]+"\n\n"
     if cve : # IF cve variable is not empty 
         return cve  
     else : 
-        return "No CVE Today is registered with this level of threat : "+cvss+""
+        return "No CVE(s) have been registered today yet with this level of threat : *"+cvss+"*"
 
 def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok 
     
@@ -65,14 +65,14 @@ def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok
         cve = ""
         for i in range(len(data)):
             if today in formatDate(data[i]["updated_at"]):
-                cve += "<b>CVE ID</b> : "+data[i]["id"]+"\n"
-                cve += "<b>CVSS</b> : "+cvssScale((data[i]["id"]))+"\n"
-                cve += "<b>Summary</b> : "+data[i]["summary"]+"\n"
-                cve += "<b>Published/Updated</b> : "+data[i]["updated_at"]+"\n\n"
+                cve += "*CVE ID* : "+data[i]["id"]+"\n"
+                cve += "*CVSS* : "+cvssScale((data[i]["id"]))+"\n"
+                cve += "*Summary* : "+data[i]["summary"]+"\n"
+                cve += "*Published/Updated* : "+data[i]["updated_at"]+"\n\n"
         if cve : # IF cve variable is not empty 
             return cve  
         else : 
-            return "No CVE Today is registered for "+vendor+" with this level of threat : "+cvss+""
+            return "No CVE(s) have been registered Today for *"+vendor+"* with this level of threat : *"+cvss+"*"
 
 def cveTodayNotSorted() :  
     
@@ -86,9 +86,10 @@ def cveTodayNotSorted() :
     cve = ""
     for i in range(len(data)):
         if today == formatDate(data[i]["updated_at"]):
-            cve += "CVE ID : "+data[i]["id"]+"\n"
-            cve += "Summary : "+data[i]["summary"]+"\n"
-            cve += "Published/Updated : "+data[i]["updated_at"]+"\n\n"
+                cve += "*CVE ID* : "+data[i]["id"]+"\n"
+                cve += "*CVSS* : "+cvssScale((data[i]["id"]))+"\n"
+                cve += "*Summary* : "+data[i]["summary"]+"\n"
+                cve += "*Published/Updated* : "+data[i]["updated_at"]+"\n\n"
     return cve  
 
 def formatDate(rawDate) :
@@ -98,6 +99,6 @@ def formatDate(rawDate) :
 
 
 # print (cveTodaySortedByVendor("microsoft"))
-# print (cveTodaySortedByCVSS("critical"))
+#print (cveTodaySortedByCVSS("critical"))
 # print (cveTodayNotSorted())
 # print (cveTodaySortedByVendorAndCVSS("Microsoft","Low"))
