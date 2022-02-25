@@ -14,7 +14,7 @@ HELP //
 
 /cve 
 /last_cve_list
-/today_cve_for_a_product
+/today_cve_sorted_by_asset
 /terminology
 """
 
@@ -45,24 +45,22 @@ def send_welcome(message):
     asset = message.text 
     asset = asset.replace('/','')
     cve = cveTodaySortedByCVSS(asset)
-    print (cve)
     if len(cve) > 4095:
         for x in range(0, len(cve), 4095): # Allow vulndote to send big GLOBAL message (split in x messages)
-            bot.reply_to(message, text=cve[x:x+4095],reply_markup=markup, parse_mode="markdown")     
+            bot.reply_to(message, text=cve[x:x+4095],reply_markup=markup)     
     else : 
-        print (1)
-        bot.reply_to(message, cve, reply_markup=markup, parse_mode="markdown")
+        bot.reply_to(message, cve, reply_markup=markup)
 
-@bot.message_handler(commands=['cve_sorted_today_asset'])
+@bot.message_handler(commands=['today_cve_sorted_by_asset'])
 def send_welcome(message):
 	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 	markup = telebot.types.ForceReply()
-	bot.reply_to(message, "eEnter a Vendor :", reply_markup=markup, parse_mode="markdown")
+	bot.reply_to(message, "eEnter a Vendor :", reply_markup=markup)
  
 @bot.message_handler(commands=['terminology'])
 def send_welcome(message):
 	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-	bot.reply_to(message,terminology(), reply_markup=markup, parse_mode="markdown")
+	bot.reply_to(message,terminology(), reply_markup=markup)
  
 ###########################################################################################################
 
@@ -75,40 +73,41 @@ def which_reply(message):
 			markup = InlineKeyboardMarkup()
 			b1 = InlineKeyboardButton(text='Products Affected', callback_data = 'Products_Affected')
 			b2 = InlineKeyboardButton(text='References', callback_data = 'References')
-			markup.add(b1, b2)
-			bot.reply_to(message, cveSearch(message.text), reply_markup=markup, parse_mode="markdown")
+			b3 = InlineKeyboardButton(text='More info', callback_data = 'More_Info')
+			markup.add(b1, b2, b3)
+			bot.reply_to(message, cveSearch(message.text), reply_markup=markup)
 		elif message.reply_to_message.text == "eEnter a Vendor :" : 
 			markup = InlineKeyboardMarkup()
 			b1 = InlineKeyboardButton(text='Critical', callback_data = 'Critical')
 			b2 = InlineKeyboardButton(text='High', callback_data = 'High')
 			b3 = InlineKeyboardButton(text='Medium', callback_data = 'Medium')
 			b4 = InlineKeyboardButton(text='Low', callback_data = 'Low')
-			markup.add(b1, b2, b3, b4)
-			bot.reply_to(message,cveTodaySortedByVendor(message.text), reply_markup=markup, parse_mode="markdown")
+			markup.add(b1, b2, b3)
+			bot.reply_to(message,cveTodaySortedByVendor(message.text), reply_markup=markup)
    
 @bot.callback_query_handler(func=lambda call: call.data != 'check_group') # Buttons fetch reply value 
 def callback_inline(call):
 
 	if call.data == "Critical":
-		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"critical"), reply_markup=call.message.reply_markup, parse_mode="markdown")
 		bot.answer_callback_query(call.id, "Loading... ")
+		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"critical"), reply_markup=call.message.reply_markup)
 	if call.data == "High":
-		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"high"), reply_markup=call.message.reply_markup, parse_mode="markdown")
 		bot.answer_callback_query(call.id, "Loading...")
+		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"high"), reply_markup=call.message.reply_markup)
 	if call.data == "Medium":
-		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"medium"), reply_markup=call.message.reply_markup, parse_mode="markdown")
 		bot.answer_callback_query(call.id, "Loading...")
+		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"medium"), reply_markup=call.message.reply_markup)
 	if call.data == "Low":
-		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"low"), reply_markup=call.message.reply_markup, parse_mode="markdown")
 		bot.answer_callback_query(call.id, "Loading...")
-	if call.data == "More_Info":
-		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"low"), reply_markup=call.message.reply_markup, parse_mode="markdown")
-		bot.answer_callback_query(call.id, "Loading...")
+		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveTodaySortedByVendorAndCVSS(call.message.reply_to_message.text,"low"), reply_markup=call.message.reply_markup)
 	if call.data == "Products_Affected":
+		bot.answer_callback_query(call.id, "Loading...")
 		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=vulnerableProductsOrVendors(call.message.reply_to_message.text), reply_markup=call.message.reply_markup)
-		bot.answer_callback_query(call.id, "Loading...")
 	if call.data == "References":
-		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveReferences(call.message.reply_to_message.text), reply_markup=call.message.reply_markup)
 		bot.answer_callback_query(call.id, "Loading...")
+		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=cveReferences(call.message.reply_to_message.text), reply_markup=call.message.reply_markup)
+	if call.data == "More_Info":
+		bot.answer_callback_query(call.id, "Loading...")
+		bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=moreInfo(call.message.reply_to_message.text), reply_markup=call.message.reply_markup)
 
 bot.infinity_polling() # Bot Exec

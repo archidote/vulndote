@@ -68,13 +68,33 @@ def vulnerableProductsOrVendors(cve) :
         cve = "" 
         cve += "*CVE ID*: "+data["id"]+"\n\n"
         for key in data["vendors"] :
-            cve += ""+key+" : \n"
+            cve += "-"+key+" : \n"
             for v in data["vendors"][key] : 
                 product = ""
                 product += ''.join(v)
-                cve += "  "+product+"\n"
+                cve += "    -"+product+"\n"
         return cve 
             
+def moreInfo(cve) :
+    
+    response = session.get('https://www.opencve.io/api/cve/'+cve+'')
+    data = response.json() 
+
+    
+    if "message" in data : 
+        return "CVE has'nt been found."
+        
+    else :
+        impact = "CVE : "+data["id"]+"\n"
+        impact += "CVSS version : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["version"]+"\n\n"
+        impact += "Attack Vector : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackVector"]+"\n"
+        impact += "Attack Complexity : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackComplexity"]+"\n"
+        impact += "Raw CVSS Vector: "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["vectorString"]+"\n"
+        impact += "Availibility Impact : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["availabilityImpact"]+"\n"
+        impact += "Privileges Required : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["privilegesRequired"]+"\n"
+        
+        return impact 
+                
 def terminology() : 
     
     terms = """
@@ -97,6 +117,7 @@ def timeOutAPI() : # TO-DO
     r = session.get("https://example.com", timeout=10000)
     print (r)
 
+# print (impact("CVE-2021-29987"))
 # print(cveReferences("CVE-2021-29987"))
 # print (vulnerableProductsOrVendors("CVE-2017-0144"))
 # print (timeOutAPI())

@@ -99,6 +99,6 @@ def formatDate(rawDate) :
 
 
 # print (cveTodaySortedByVendor("microsoft"))
-#print (cveTodaySortedByCVSS("critical"))
+# print (cveTodaySortedByCVSS("critical"))
 # print (cveTodayNotSorted())
 # print (cveTodaySortedByVendorAndCVSS("Microsoft","Low"))
