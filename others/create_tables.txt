@@ -1,4 +1,4 @@
-CREATE TABLE CVE_Stack (
+CREATE TABLE CVE_Vendor_Stack (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    cveCode text NOT NULL
+    request text NOT NULL
 );

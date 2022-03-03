@@ -12,7 +12,6 @@ def cveTodaySortedByVendor(vendor) :
 
     if "message" in data : 
         return "Vendor/Product has'nt been found."
-        
     else : 
 
         today = now = datetime.now()
@@ -21,11 +20,12 @@ def cveTodaySortedByVendor(vendor) :
         cve = ""
         for i in range(len(data)):
             if today in formatDate(data[i]["updated_at"]):
-                cve += "**CVE ID** : "+data[i]["id"]+"\n"
-                cve += "*CVSS* : "+cvssScale((data[i]["id"]))+"\n"
-                cve += "*Summary* : "+data[i]["summary"]+"\n"
-                cve += "*Published/Updated* : "+data[i]["updated_at"]+"\n\n"
+                cve += "<strong>CVE ID</strong> : "+data[i]["id"]+"\n"
+                cve += "<strong>CVSS</strong> : "+cvssScale((data[i]["id"]))+"\n"
+                cve += "<strong>Summary</strong> : "+data[i]["summary"]+"\n"
+                cve += "<strong>Published/Updated</strong> : "+data[i]["updated_at"]+"\n\n"
         if cve : # IF cve variable is not empty 
+            cve += "<strong><i>Sort CVE by</i> : </strong> "
             return cve  
         else : 
             return "No CVE"
@@ -33,7 +33,6 @@ def cveTodaySortedByVendor(vendor) :
 def cveTodaySortedByCVSS(cvss) :  
     
     response = session.get('https://www.opencve.io/api/cve?cvss='+cvss)
-    
     data = response.json() 
 
     today = now = datetime.now()
@@ -42,10 +41,12 @@ def cveTodaySortedByCVSS(cvss) :
     cve = ""
     for i in range(len(data)):
         if today in formatDate(data[i]["updated_at"]):
-            cve += "*CVE ID* : "+data[i]["id"]+"\n"
-            cve += "*CVSS* : "+cvssScale((data[i]["id"]))+"\n"
-            cve += "*Summary* : "+data[i]["summary"]+"\n"
-            cve += "*Published/Updated* : "+data[i]["updated_at"]+"\n\n"
+                cve += "<strong>CVE ID</strong> : "+data[i]["id"]+"\n"
+                cve += "<strong>CVSS</strong> : "+cvssScale((data[i]["id"]))+"\n"
+                cve += "<strong>Summary</strong> : "+data[i]["summary"]+"\n"
+                cve += "<strong>Published/Updated</strong> : "+data[i]["updated_at"]+"\n\n"
+                cveIdFormated=data[i]["id"].replace("-", "_")
+                cve += "/Cve@"+cveIdFormated+"\n"
     if cve : # IF cve variable is not empty 
         return cve  
     else : 
@@ -65,10 +66,10 @@ def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok
         cve = ""
         for i in range(len(data)):
             if today in formatDate(data[i]["updated_at"]):
-                cve += "*CVE ID* : "+data[i]["id"]+"\n"
-                cve += "*CVSS* : "+cvssScale((data[i]["id"]))+"\n"
-                cve += "*Summary* : "+data[i]["summary"]+"\n"
-                cve += "*Published/Updated* : "+data[i]["updated_at"]+"\n\n"
+                cve += "<strong>CVE ID</strong> : "+data[i]["id"]+"\n"
+                cve += "<strong>CVSS</strong> : "+cvssScale((data[i]["id"]))+"\n"
+                cve += "<strong>Summary</strong> : "+data[i]["summary"]+"\n"
+                cve += "<strong>Published/Updated</strong> : "+data[i]["updated_at"]+"\n\n"
         if cve : # IF cve variable is not empty 
             return cve  
         else : 
@@ -77,7 +78,6 @@ def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok
 def cveTodayNotSorted() :  
     
     response = session.get('https://www.opencve.io/api/cve')
-    
     data = response.json() 
 
     today = now = datetime.now()
@@ -86,10 +86,10 @@ def cveTodayNotSorted() :
     cve = ""
     for i in range(len(data)):
         if today == formatDate(data[i]["updated_at"]):
-                cve += "*CVE ID* : "+data[i]["id"]+"\n"
-                cve += "*CVSS* : "+cvssScale((data[i]["id"]))+"\n"
-                cve += "*Summary* : "+data[i]["summary"]+"\n"
-                cve += "*Published/Updated* : "+data[i]["updated_at"]+"\n\n"
+                cve += "<strong>CVE ID</strong> : "+data[i]["id"]+"\n"
+                cve += "<strong>CVSS</strong> : "+cvssScale((data[i]["id"]))+"\n"
+                cve += "<strong>Summary</strong> : "+data[i]["summary"]+"\n"
+                cve += "<strong>Published/Updated</strong> : "+data[i]["updated_at"]+"\n\n"
     return cve  
 
 def formatDate(rawDate) :
