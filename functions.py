@@ -14,7 +14,7 @@ def cveSearch(cveCode) :
 
     
     if "message" in data : 
-        return "CVE has'nt been found."
+        return "CVE not found."
         
     else :
         cve = "" 
@@ -47,7 +47,7 @@ def cveReferences(cve) :
 
     
     if "message" in data : 
-        return "CVE has'nt been found."
+        return "CVE not found."
         
     else :
         cve = "" 
@@ -65,7 +65,7 @@ def vulnerableProductsOrVendors(cve) :
 
     
     if "message" in data : 
-        return "CVE has'nt been found."
+        return "CVE not found."
         
     else :
         cve = "" 
@@ -85,7 +85,7 @@ def moreInfo(cve) :
 
     
     if "message" in data : 
-        return "CVE has'nt been found."
+        return "CVE not found."
         
     else :
         impact = "CVE : "+data["id"]+"\n"
