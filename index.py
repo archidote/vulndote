@@ -77,12 +77,15 @@ def send_welcome(message):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         asset = message.text 
         asset = asset.replace('/','')
+        send_text = 'https://api.telegram.org/bot' + telegramBotToken + '/sendMessage?chat_id=' + str(message.chat.id) + '&text=' + "Loading..."
+        requests.get(send_text)
         cve = cveTodaySortedByCVSS(asset)
-        if len(cve) > 4095:
+        if len(cve) > 4095 :
             for x in range(0, len(cve), 4095): # Allow vulndote to send big GLOBAL message (split in x messages)
                 bot.reply_to(message, text=cve[x:x+4095],reply_markup=markup)
         else : 
             bot.reply_to(message, cve, reply_markup=markup)
+
 
 @bot.message_handler(commands=['today_cve_sorted_by_asset'])
 def send_welcome(message):
