@@ -18,12 +18,10 @@ def cveSearch(cveCode) :
         
     else :
         cve = "" 
-        cve += "*CVE ID*: "+data["id"]+"\n"
-        cve += "*CVSS* : "+cvssScale((data["id"]))+"\n"
-        cve += "*Summary* : "+data["summary"]+"\n"
-        cve += "*Published/Updated* : "+data["updated_at"]+"\n\n"
-        cve += "*More info ?* :  "
-        
+        cve += "<strong>CVE ID</strong> : "+data["id"]+"\n"
+        cve += "<strong>CVSS</strong> : "+cvssScale((data["id"]))+"\n"
+        cve += "<strong>Summary</strong> : "+data["summary"]+"\n"
+        cve += "<strong>Published/Updated</strong> : "+data["updated_at"]+"\n\n"
         return cve 
 
 def cvssScale(cve): 
@@ -51,11 +49,9 @@ def cveReferences(cve) :
         
     else :
         cve = "" 
-        cve += "*CVE ID*: "+data["id"]+"\n\n"
+        cve += "<strong>CVE ID</strong>: "+data["id"]+"\n\n"
         for i in range(len(data["raw_nvd_data"]["cve"]["references"]["reference_data"])) :
-            cve += data["raw_nvd_data"]["cve"]["references"]["reference_data"][i]["refsource"]+"\n"
-            cve += "   -"+data["raw_nvd_data"]["cve"]["references"]["reference_data"][i]["url"]+"\n"
-            
+            cve += ""+str(i)+" : "+data["raw_nvd_data"]["cve"]["references"]["reference_data"][i]["refsource"]+" : 🔗 <a href='"+data["raw_nvd_data"]["cve"]["references"]["reference_data"][i]["url"]+"'>Link</a>\n"
         return cve 
 
 def vulnerableProductsOrVendors(cve) : 
@@ -69,9 +65,9 @@ def vulnerableProductsOrVendors(cve) :
         
     else :
         cve = "" 
-        cve += "*CVE ID*: "+data["id"]+"\n\n"
+        cve += "<strong>CVE ID</strong>: "+data["id"]+"\n\n"
         for key in data["vendors"] :
-            cve += "➡️"+key+" : \n"
+            cve += "➡️<strong>"+key+"</strong> : \n"
             for v in data["vendors"][key] : 
                 product = ""
                 product += ''.join(v)

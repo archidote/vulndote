@@ -1,5 +1,6 @@
 from email import message
 import telebot
+import html
 from telebot import *
 from time import time
 from todayCVE import * 
@@ -8,7 +9,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from todayCVE import *
 
-bot = telebot.TeleBot(telegramBotToken, parse_mode=None)
+bot = telebot.TeleBot(telegramBotToken, parse_mode="HTML")
 
 help = """
 HELP //
@@ -20,10 +21,17 @@ HELP //
 /subscribe
 """
 
+# @bot.message_handler(commands=['start'])
+# def send_welcome(message):
+# 	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+# 	bot.reply_to(message, "Hey "+message.from_user.first_name+"👋 Welcome to vulndote bot ! tap /help to know supported command 😊", reply_markup=markup)
+
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-	bot.reply_to(message, "Hey "+message.from_user.first_name+"👋 Welcome to vulndote bot ! tap /help to know supported command 😊", reply_markup=markup)
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    test="Checkmk <=2.0.0p19 contains a Cross Site Scripting (XSS) vulnerability. While creating or editing a user attribute, the Help Text is subject to HTML injection, which can be triggered for editing a user."
+    bot.reply_to(message,test, reply_markup=markup)
  
 @bot.message_handler(commands=['cve'])
 def send_welcome(message):
@@ -45,7 +53,7 @@ def send_welcome(message):
         b2 = InlineKeyboardButton(text='References', callback_data = 'References')
         b3 = InlineKeyboardButton(text='More info', callback_data = 'More_Info')
         markup.add(b1, b2, b3)
-        bot.reply_to(message, cveSearch(reFormatedCVE), reply_markup=markup, parse_mode="HTML")
+        bot.reply_to(message, cveSearch(reFormatedCVE), reply_markup=markup)
 
 
 @bot.message_handler(commands=['today_cve_list'])
@@ -74,7 +82,7 @@ def send_welcome(message):
             for x in range(0, len(cve), 4095): # Allow vulndote to send big GLOBAL message (split in x messages)
                 bot.reply_to(message, text=cve[x:x+4095],reply_markup=markup)
         else : 
-            bot.reply_to(message, cve, reply_markup=markup,parse_mode="HTML")
+            bot.reply_to(message, cve, reply_markup=markup)
 
 @bot.message_handler(commands=['today_cve_sorted_by_asset'])
 def send_welcome(message):
@@ -103,7 +111,7 @@ def which_reply(message):
 			b2 = InlineKeyboardButton(text='References', callback_data = 'References')
 			b3 = InlineKeyboardButton(text='More info', callback_data = 'More_Info')
 			markup.add(b1, b2, b3)
-			bot.reply_to(message, cveSearch(message.text), reply_markup=markup, parse_mode="HTML")
+			bot.reply_to(message, cveSearch(message.text), reply_markup=markup)
 		elif message.reply_to_message.text == "eEnter a Vendor :" : 
 			markup = InlineKeyboardMarkup()
 			b1 = InlineKeyboardButton(text='Critical', callback_data = 'Critical')
@@ -111,7 +119,7 @@ def which_reply(message):
 			b3 = InlineKeyboardButton(text='Medium', callback_data = 'Medium')
 			b4 = InlineKeyboardButton(text='Low', callback_data = 'Low')
 			markup.add(b1, b2, b3, b4)
-			bot.reply_to(message,cveTodaySortedByVendor(message.text), reply_markup=markup, parse_mode="HTML")
+			bot.reply_to(message,cveTodaySortedByVendor(message.text), reply_markup=markup)
    
 @bot.callback_query_handler(
     func=lambda call: call.data != "check_group"
@@ -173,6 +181,7 @@ def callback_inline(call):
             chat_id=call.message.chat.id,
             text=cveReferences(cveReformated(call.message.reply_to_message.text)),
             reply_markup=call.message.reply_markup,
+            disable_web_page_preview=True
         )
     if call.data == "More_Info":
         bot.answer_callback_query(call.id, "Loading...")
