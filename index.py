@@ -7,7 +7,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 bot = telebot.TeleBot(telegramBotToken, parse_mode="HTML")
 
 help = """
-HELP //
+HELP MENU //
 
 /cve 
 /today_cve_list
