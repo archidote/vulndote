@@ -1,7 +1,7 @@
 from numpy import product
-from controller import * 
-import requests
+from assets.controller import * 
 import urllib3
+import html 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def cveSearch(cveCode) : 
@@ -20,7 +20,7 @@ def cveSearch(cveCode) :
         cve = "" 
         cve += "<strong>CVE ID</strong> : "+data["id"]+"\n"
         cve += "<strong>CVSS</strong> : "+cvssScale((data["id"]))+"\n"
-        cve += "<strong>Summary</strong> : "+data["summary"]+"\n"
+        cve += "<strong>Summary</strong> : "+html.escape(data["summary"],quote=True)+"\n"
         cve += "<strong>Published/Updated</strong> : "+data["updated_at"]+"\n\n"
         return cve 
 
@@ -50,8 +50,10 @@ def cveReferences(cve) :
     else :
         cve = "" 
         cve += "<strong>CVE ID</strong>: "+data["id"]+"\n\n"
+        num = 1
         for i in range(len(data["raw_nvd_data"]["cve"]["references"]["reference_data"])) :
-            cve += ""+str(i)+" : "+data["raw_nvd_data"]["cve"]["references"]["reference_data"][i]["refsource"]+" : 🔗 <a href='"+data["raw_nvd_data"]["cve"]["references"]["reference_data"][i]["url"]+"'>Link</a>\n"
+            cve += ""+str(num)+" : "+data["raw_nvd_data"]["cve"]["references"]["reference_data"][i]["refsource"]+" : 🔗 <a href='"+data["raw_nvd_data"]["cve"]["references"]["reference_data"][i]["url"]+"'>Link</a>\n"
+            num = num + 1  
         return cve 
 
 def vulnerableProductsOrVendors(cve) : 

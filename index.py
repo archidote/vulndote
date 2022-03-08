@@ -1,13 +1,8 @@
-from email import message
 import telebot
-import html
 from telebot import *
-from time import time
-from todayCVE import * 
-from controller import * 
+from assets.todayCVE import * 
+from assets.controller import * 
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-
-from todayCVE import *
 
 bot = telebot.TeleBot(telegramBotToken, parse_mode="HTML")
 
@@ -80,9 +75,9 @@ def send_welcome(message):
         send_text = 'https://api.telegram.org/bot' + telegramBotToken + '/sendMessage?chat_id=' + str(message.chat.id) + '&text=' + "Loading..."
         requests.get(send_text)
         cve = cveTodaySortedByCVSS(asset)
-        if len(cve) > 4095 :
-            for x in range(0, len(cve), 4095): # Allow vulndote to send big GLOBAL message (split in x messages)
-                bot.reply_to(message, text=cve[x:x+4095],reply_markup=markup)
+        if len(cve) > 4096 :
+            for x in range(0, len(cve), 4096): # Allow vulndote to send big GLOBAL message (split in x messages)
+                bot.reply_to(message, text=cve[x:x+4096],reply_markup=markup)
         else : 
             bot.reply_to(message, cve, reply_markup=markup)
 
@@ -99,7 +94,7 @@ def send_welcome(message):
 @bot.message_handler(commands=['terminology'])
 def send_welcome(message):
 	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-	bot.reply_to(message,terminology(), reply_markup=markup)
+	bot.reply_to(message,terminology(), reply_markup=markup,disable_web_page_preview=True)
  
 ###########################################################################################################
 
