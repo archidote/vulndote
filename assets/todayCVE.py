@@ -46,7 +46,7 @@ def cveTodaySortedByCVSS(cvss) :
                 cve += "<b>Summary</b> : "+html.escape(data[i]["summary"],quote=True)+"\n"
                 cve += "<b>Published/Updated</b> : "+data[i]["updated_at"]+"\n\n"
                 cveIdFormated=data[i]["id"].replace("-", "_")
-                cve += "More Info ? : /Cve@"+cveIdFormated+"\n"
+                cve += "More Info ? : /Cve@"+cveIdFormated+"\n\n"
     if cve : # IF cve variable is not empty 
         return cve  
     else : 
@@ -71,7 +71,7 @@ def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok
                 cve += "<b>Summary</b> : "+html.escape(data[i]["summary"],quote=True)+"\n"
                 cve += "<b>Published/Updated</b> : "+data[i]["updated_at"]+"\n\n"
                 cveIdFormated=data[i]["id"].replace("-", "_")
-                cve += "More Info ? : /Cve@"+cveIdFormated+"\n"
+                cve += "More Info ? : /Cve@"+cveIdFormated+"\n\n"
         if cve : # IF cve variable is not empty 
             cve += "<b><i>Sort CVE by</i> : </b> "
             return cve  
