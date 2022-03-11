@@ -2,6 +2,8 @@ import telebot
 from telebot import *
 from assets.todayCVE import * 
 from assets.controller import * 
+from assets.functions import * 
+from assets.PoCExploits import * 
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 bot = telebot.TeleBot(telegramBotToken, parse_mode="HTML")
@@ -44,10 +46,11 @@ def send_welcome(message):
     else : 
         reFormatedCVE = cveReformated(message.text)
         markup = InlineKeyboardMarkup()
-        b1 = InlineKeyboardButton(text='Products Affected', callback_data = 'Products_Affected')
-        b2 = InlineKeyboardButton(text='References', callback_data = 'References')
-        b3 = InlineKeyboardButton(text='More info', callback_data = 'More_Info')
-        markup.add(b1, b2, b3)
+        b1 = InlineKeyboardButton(text='Products Affected',callback_data='Products_Affected')
+        b2 = InlineKeyboardButton(text='References', callback_data='References')
+        b3 = InlineKeyboardButton(text='More info', callback_data='More_Info')
+        b4 = InlineKeyboardButton(text='Exploits ?', callback_data='Available_Exploits')
+        markup.add(b1, b2, b3, b4)
         bot.reply_to(message, cveSearch(reFormatedCVE), reply_markup=markup)
 
 
@@ -97,27 +100,29 @@ def send_welcome(message):
 	bot.reply_to(message,terminology(), reply_markup=markup,disable_web_page_preview=True)
  
 ###########################################################################################################
-
 @bot.message_handler(func=lambda m: True)
 def which_reply(message):
-	if message.reply_to_message == None : 
-		bot.reply_to(message,help)
-	else :
-		if message.reply_to_message.text == "Enter a CVE code :" : 
-			markup = InlineKeyboardMarkup()
-			b1 = InlineKeyboardButton(text='Products Affected', callback_data = 'Products_Affected')
-			b2 = InlineKeyboardButton(text='References', callback_data = 'References')
-			b3 = InlineKeyboardButton(text='More info', callback_data = 'More_Info')
-			markup.add(b1, b2, b3)
-			bot.reply_to(message, cveSearch(message.text), reply_markup=markup)
-		elif message.reply_to_message.text == "eEnter a Vendor :" : 
-			markup = InlineKeyboardMarkup()
-			b1 = InlineKeyboardButton(text='Critical', callback_data = 'Critical')
-			b2 = InlineKeyboardButton(text='High', callback_data = 'High')
-			b3 = InlineKeyboardButton(text='Medium', callback_data = 'Medium')
-			b4 = InlineKeyboardButton(text='Low', callback_data = 'Low')
-			markup.add(b1, b2, b3, b4)
-			bot.reply_to(message,cveTodaySortedByVendor(message.text), reply_markup=markup)
+    if message.reply_to_message == None:
+        bot.reply_to(message, help)
+    else:
+        if message.reply_to_message.text == 'Enter a CVE code :':
+            markup = InlineKeyboardMarkup()
+            b1 = InlineKeyboardButton(text='Products Affected',callback_data='Products_Affected')
+            b2 = InlineKeyboardButton(text='References',callback_data='References')
+            b3 = InlineKeyboardButton(text='More info',callback_data='More_Info')
+            b4 = InlineKeyboardButton(text='Exploits ?',callback_data='Available_Exploits')
+            markup.add(b1, b2, b3, b4)
+            bot.reply_to(message, cveSearch(message.text),
+                         reply_markup=markup)
+        elif message.reply_to_message.text == 'eEnter a Vendor :':
+            markup = InlineKeyboardMarkup()
+            b1 = InlineKeyboardButton(text='Critical',callback_data='Critical')
+            b2 = InlineKeyboardButton(text='High', callback_data='High')
+            b3 = InlineKeyboardButton(text='Medium',callback_data='Medium')
+            b4 = InlineKeyboardButton(text='Low', callback_data='Low')
+            markup.add(b1, b2, b3, b4)
+            bot.reply_to(message, cveTodaySortedByVendor(message.text),
+                         reply_markup=markup)
    
 @bot.callback_query_handler(
     func=lambda call: call.data != "check_group"
@@ -189,6 +194,13 @@ def callback_inline(call):
             text=moreInfo(cveReformated(call.message.reply_to_message.text)),
             reply_markup=call.message.reply_markup,
         )
-
+    if call.data == "Available_Exploits":
+        bot.answer_callback_query(call.id, "Loading...")
+        bot.edit_message_text(
+            message_id=call.message.id,
+            chat_id=call.message.chat.id,
+            text=(searchPoCExploitWithSploitus(cveReformated(call.message.reply_to_message.text))),
+            reply_markup=call.message.reply_markup,disable_web_page_preview=True
+        )
 
 bot.infinity_polling()  # Bot Exec
