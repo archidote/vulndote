@@ -1,12 +1,15 @@
+from pytest import mark
 import telebot
 from telebot import *
+from assets.subscriber import checkIfUserIsAlreadyASubscriber, deleteSubscriber, insertSubscriber
 from assets.todayCVE import * 
 from assets.controller import * 
 from assets.functions import * 
 from assets.PoCExploits import * 
+from assets.PoCExploits import * 
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-bot = telebot.TeleBot(telegramBotToken, parse_mode="HTML")
+bot = telebot.TeleBot(telegramBotToken,parse_mode="HTML")
 
 help = """
 HELP MENU //
@@ -27,8 +30,7 @@ HELP MENU //
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    test="Checkmk <=2.0.0p19 contains a Cross Site Scripting (XSS) vulnerability. While creating or editing a user attribute, the Help Text is subject to HTML injection, which can be triggered for editing a user."
-    bot.reply_to(message,test, reply_markup=markup)
+    bot.reply_to(message, "Hello", reply_markup=markup)
  
 @bot.message_handler(commands=['cve'])
 def send_welcome(message):
@@ -49,8 +51,9 @@ def send_welcome(message):
         b1 = InlineKeyboardButton(text='Products Affected',callback_data='Products_Affected')
         b2 = InlineKeyboardButton(text='References', callback_data='References')
         b3 = InlineKeyboardButton(text='More info', callback_data='More_Info')
-        b4 = InlineKeyboardButton(text='Exploits ?', callback_data='Available_Exploits')
-        markup.add(b1, b2, b3, b4)
+        b4 = InlineKeyboardButton(text='search Exploit with sploitus', callback_data='Available_Exploits_With_Sploitus')
+        b5 = InlineKeyboardButton(text='search Exploit with sploitus', callback_data='Available_Exploits_Only_With_Github')
+        markup.add(b1, b2, b3, b4, b5)
         bot.reply_to(message, cveSearch(reFormatedCVE), reply_markup=markup)
 
 
@@ -75,15 +78,13 @@ def send_welcome(message):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         asset = message.text 
         asset = asset.replace('/','')
-        send_text = 'https://api.telegram.org/bot' + telegramBotToken + '/sendMessage?chat_id=' + str(message.chat.id) + '&text=' + "Loading..."
-        requests.get(send_text)
+        var_data = bot.send_message(message.from_user.id,"Loading...⌛")
         cve = cveTodaySortedByCVSS(asset)
         if len(cve) > 4096 :
             for x in range(0, len(cve), 4096): # Allow vulndote to send big GLOBAL message (split in x messages)
-                bot.reply_to(message, text=cve[x:x+4096],reply_markup=markup)
+                bot.reply_to(message, text=cve[x:x+4096],reply_markup=markup) # Message edit don't work for a big message, because the last message ate the previous's
         else : 
-            bot.reply_to(message, cve, reply_markup=markup)
-
+            bot.edit_message_text(cve, var_data.chat.id, var_data.message_id)
 
 @bot.message_handler(commands=['today_cve_sorted_by_asset'])
 def send_welcome(message):
@@ -93,6 +94,13 @@ def send_welcome(message):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup = telebot.types.ForceReply()
         bot.reply_to(message, "eEnter a Vendor :", reply_markup=markup)
+        
+@bot.message_handler(commands=['subscribe'])
+def send_welcome(message):
+	markup = InlineKeyboardMarkup()	
+	b1 = InlineKeyboardButton(text='Vendor', callback_data = 'subscribe_vendor_alerts')
+	markup.add(b1)
+	bot.reply_to(message, "Subscribe Menu :", reply_markup=markup)
  
 @bot.message_handler(commands=['terminology'])
 def send_welcome(message):
@@ -110,8 +118,9 @@ def which_reply(message):
             b1 = InlineKeyboardButton(text='Products Affected',callback_data='Products_Affected')
             b2 = InlineKeyboardButton(text='References',callback_data='References')
             b3 = InlineKeyboardButton(text='More info',callback_data='More_Info')
-            b4 = InlineKeyboardButton(text='Exploits ?',callback_data='Available_Exploits')
-            markup.add(b1, b2, b3, b4)
+            b4 = InlineKeyboardButton(text='search Exploit with sploitus', callback_data='Available_Exploits_With_Sploitus')
+            b5 = InlineKeyboardButton(text='search Exploit with sploitus', callback_data='Available_Exploits_Only_With_Github')
+            markup.add(b1, b2, b3, b4, b5)
             bot.reply_to(message, cveSearch(message.text),
                          reply_markup=markup)
         elif message.reply_to_message.text == 'eEnter a Vendor :':
@@ -121,8 +130,21 @@ def which_reply(message):
             b3 = InlineKeyboardButton(text='Medium',callback_data='Medium')
             b4 = InlineKeyboardButton(text='Low', callback_data='Low')
             markup.add(b1, b2, b3, b4)
-            bot.reply_to(message, cveTodaySortedByVendor(message.text),
-                         reply_markup=markup)
+            cve = cveTodaySortedByVendor(message.text)
+            if len(cve) > 4096 :
+                for x in range(0, len(cve), 4096): # Allow vulndote to send big GLOBAL message (split in x messages)
+                    bot.reply_to(message, text=cve[x:x+4096],reply_markup=markup)
+            else : 
+                bot.reply_to(message, cve, reply_markup=markup)
+            
+        elif message.reply_to_message.text == "Enter your a vendor/product name to be notifyed." : 
+            APIRequest = cveTodaySortedByVendor(message.text)
+            if APIRequest == "Vendor/Product hasn't been found." :
+                bot.reply_to(message,"Vendor/Product hasn't been found. \n Try again : /subscribe")
+            else : 
+                insertSubscriber(str(message.chat.id),"vendor",message.text,APIRequest)
+                bot.reply_to(message,"Subscribed to CVE alert for the following Vendor/Product :"+message.text+"")
+
    
 @bot.callback_query_handler(
     func=lambda call: call.data != "check_group"
@@ -194,13 +216,49 @@ def callback_inline(call):
             text=moreInfo(cveReformated(call.message.reply_to_message.text)),
             reply_markup=call.message.reply_markup,
         )
-    if call.data == "Available_Exploits":
+        
+    if call.data == "Available_Exploits_With_Sploitus":
         bot.answer_callback_query(call.id, "Loading...")
         bot.edit_message_text(
             message_id=call.message.id,
             chat_id=call.message.chat.id,
             text=(searchPoCExploitWithSploitus(cveReformated(call.message.reply_to_message.text))),
             reply_markup=call.message.reply_markup,disable_web_page_preview=True
-        )
+        )	
+        
+    if call.data == "Available_Exploits_Only_With_Github":
+        bot.answer_callback_query(call.id, "Loading...")
+        bot.edit_message_text(
+            message_id=call.message.id,
+            chat_id=call.message.chat.id,
+            text=(searchPoCExploitOnlyWithGithub(cveReformated(call.message.reply_to_message.text))),
+            reply_markup=call.message.reply_markup,disable_web_page_preview=True
+        )	
 
+    if call.data == "cancel":
+        bot.delete_message(call.message.chat.id, call.message.message_id)
+        
+    if call.data == "subscribe_vendor_alerts":
+        #print (call.message.json.message_id) # à revoir pour la facto
+        check = checkIfUserIsAlreadyASubscriber("subscriber_vendor_alerts",str(call.message.chat.id))
+        if check == True :
+            markup = InlineKeyboardMarkup()
+            b1 = InlineKeyboardButton(text='Unsubscribe', callback_data = 'unsubscribe_vendor_alerts')
+            markup.add(b1)
+            bot.reply_to(call.message,"You are already subscribed.",reply_markup=markup)
+        else : 
+            markup = telebot.types.ForceReply()
+            bot.reply_to(call.message, "Enter your a vendor/product name to be notifyed.", reply_markup=markup)
+
+    if call.data == "unsubscribe_vendor_alerts":
+        markup = InlineKeyboardMarkup()
+        b1 = InlineKeyboardButton(text='Yes', callback_data = 'unsubscribe_vendor_alerts_confirm')
+        b2 = InlineKeyboardButton(text='No', callback_data = 'cancel')
+        markup.add(b1, b2)
+        bot.send_message(call.message.chat.id, text="Are you sure you want <b>unsubscribe</b> to <b>vendors/products</b> alerts?", reply_markup=markup)
+        bot.answer_callback_query(call.id, "Are you sure?")
+        
+    if call.data == "unsubscribe_vendor_alerts_confirm":
+        bot.answer_callback_query(call.id, "You unsubscribed to allergie alerts")
+        bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=deleteSubscriber("vendor",call.message.chat.id))
 bot.infinity_polling()  # Bot Exec

@@ -69,7 +69,7 @@ def vulnerableProductsOrVendors(cve) :
         cve = "" 
         cve += "<strong>CVE ID</strong>: "+data["id"]+"\n\n"
         for key in data["vendors"] :
-            cve += "➡️<strong>"+key+"</strong> : \n"
+            cve += "📦<strong> "+key+"</strong> : \n"
             for v in data["vendors"][key] : 
                 product = ""
                 product += ''.join(v)
@@ -86,36 +86,37 @@ def moreInfo(cve) :
         return "CVE not found."
         
     else :
-        impact = "CVE : "+data["id"]+"\n"
-        impact += "CVSS version : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["version"]+"\n\n"
-        impact += "Attack Vector : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackVector"]+"\n"
-        impact += "Attack Complexity : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackComplexity"]+"\n"
-        impact += "Raw CVSS Vector: \n"
-        impact += "➡️"+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["vectorString"]+"\n\n"
-        impact += "Attack Complexity : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackComplexity"]+"\n"
-        impact += "Availibility Impact : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["availabilityImpact"]+"\n"
-        impact += "Privileges ? : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["privilegesRequired"]+"\n"
-        impact += "Confidentiality : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["confidentialityImpact"]+"\n\n"
-        impact += "Impact Score : "+str(data["raw_nvd_data"]["impact"]["baseMetricV3"]["impactScore"])+"\n"
-        impact += "Exploitability Score : "+str(data["raw_nvd_data"]["impact"]["baseMetricV3"]["exploitabilityScore"])+"\n"
+        impact = "<b>CVE</b> : "+data["id"]+"\n"
+        impact += "<b>CVSS version</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["version"]+"\n\n"
+        impact += "<b>Attack Vector</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackVector"]+"\n"
+        impact += "<b>Attack Complexity</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackComplexity"]+"\n"
+        impact += "<b>Raw CVSS Vector</b> : \n\n"
+        impact += ""+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["vectorString"]+"\n\n"
+        impact += "<b>Attack Complexity</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackComplexity"]+"\n"
+        impact += "<b>Availibility Impact</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["availabilityImpact"]+"\n"
+        impact += "<b>Privileges required ?</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["privilegesRequired"]+"\n"
+        impact += "<b>Confidentiality</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["confidentialityImpact"]+"\n\n"
+        impact += "<b>Impact Score</b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV3"]["impactScore"])+"\n"
+        impact += "<b>Exploitability Score</b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV3"]["exploitabilityScore"])+"\n\n"
+        impact += "<i>If you don't understand terms</i> : /terminology"
         
         return impact 
                 
 def terminology() : 
     
     terms = """ 
-TERMINOLOGY : 
 
-CVE : Common Vulnerabilities and Exposures
-CVSS : Common Vulnerability Scoring System (0->10)
-CVSS-Vector : AV:N/AC:L/Au:N/C:N/I:N/A:P
-    More info cvss-vector (v2): https://www.first.org/cvss/v2/guide 
-    More info cvss-vector (v3): https://www.first.org/cvss/calculator/3.0
-CWE : Common Weakness Enumeration
-    More Info : https://fr.wikipedia.org/wiki/Common_Weakness_Enumeration
-CPE : Common Platform Enumeration
-    More info : https://en.wikipedia.org/wiki/Common_Platform_Enumeration
-    
+<b>CVE</b> : Common Vulnerabilities and Exposures
+    ℹ️  <a href="https://en.wikipedia.org/wiki/Common_Vulnerabilities_and_Exposures">🔗 Link</a>
+<b>CVSS</b> : Common Vulnerability Scoring System (0->10)
+    ℹ️  <a href="https://en.wikipedia.org/wiki/Common_Vulnerability_Scoring_System">🔗 Link</a>
+<b>CVSS-Vector</b> : AV:N/AC:L/Au:N/C:N/I:N/A:P
+    ℹ️ cvss-vector (v2): <a href="https://www.first.org/cvss/v2/guide">🔗 Link</a>
+    ℹ️ cvss-vector (v3): <a href="https://www.first.org/cvss/calculator/3.0">🔗 Link</a>
+<b>CWE</b> : Common Weakness Enumeration
+    ℹ️ <a href="https://en.wikipedia.org/wiki/Common_Weakness_Enumeration">🔗 Link</a>
+<b>CPE</b> : Common Platform Enumeration
+    ℹ️ <a href="https://en.wikipedia.org/wiki/Common_Platform_Enumeration">🔗 Link</a>
     """
     return terms
 

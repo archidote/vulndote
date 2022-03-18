@@ -1,0 +1,1 @@
+SELECT * FROM subscriber_vendor_alerts WHERE chat_id LIKE '653258620' ;
