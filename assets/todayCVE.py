@@ -9,7 +9,7 @@ def cveTodaySortedByVendor(vendor) :
     data = response.json() 
 
     if "message" in data : 
-        return "Vendor/Product has'nt been found."
+        return "Vendor/Product hasn't been found."
     else : 
 
         today = now = datetime.now()
@@ -50,7 +50,7 @@ def cveTodaySortedByCVSS(cvss) :
     if cve : # IF cve variable is not empty 
         return cve  
     else : 
-        return "No CVE(s) have been registered today yet with this level of threat : *"+cvss+"*"
+        return "No CVE(s) have been registered today yet with this level of threat : <b>"+cvss+"</b>"
 
 def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok 
     
@@ -76,7 +76,7 @@ def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok
             cve += "<b><i>Sort CVE by</i> : </b> "
             return cve  
         else : 
-            return "No CVE(s) have been registered Today for *"+vendor+"* with this level of threat : *"+cvss+"*"
+            return "No CVE(s) have been registered Today for <b>"+vendor+"</b> with this level of threat : <b>"+cvss+"</b>"
 
 def cveTodayNotSorted() :  
     

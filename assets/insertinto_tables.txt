@@ -1,0 +1,1 @@
+INSERT OR IGNORE INTO subscriber_vendor_alerts(chat_id,vendor,APIRequest) VALUES ('653258620','Linux','');
