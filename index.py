@@ -1,5 +1,6 @@
-from pytest import mark
+from datetime import date
 import telebot
+import datetime
 from telebot import *
 from assets.subscriber import checkIfUserIsAlreadyASubscriber, deleteSubscriber, insertSubscriber
 from assets.todayCVE import * 
@@ -30,6 +31,8 @@ HELP MENU //
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    today = date.today()
+    hello(message.chat.id,message.from_user.first_name,today)
     bot.reply_to(message, "Hello", reply_markup=markup)
  
 @bot.message_handler(commands=['cve'])
@@ -51,9 +54,10 @@ def send_welcome(message):
         b1 = InlineKeyboardButton(text='Products Affected',callback_data='Products_Affected')
         b2 = InlineKeyboardButton(text='References', callback_data='References')
         b3 = InlineKeyboardButton(text='More info', callback_data='More_Info')
-        b4 = InlineKeyboardButton(text='search Exploit with sploitus', callback_data='Available_Exploits_With_Sploitus')
-        b5 = InlineKeyboardButton(text='search Exploit with sploitus', callback_data='Available_Exploits_Only_With_Github')
-        markup.add(b1, b2, b3, b4, b5)
+        b4 = InlineKeyboardButton(text='🔍 PoC on sploitus ?', callback_data='Available_Exploits_With_Sploitus')
+        b5 = InlineKeyboardButton(text='🔍 PoC on Github ?', callback_data='Available_Exploits_Only_With_Github')
+        b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
+        markup.add(b1, b2, b3, b4, b5, b6)
         bot.reply_to(message, cveSearch(reFormatedCVE), reply_markup=markup)
 
 
@@ -101,6 +105,11 @@ def send_welcome(message):
 	b1 = InlineKeyboardButton(text='Vendor', callback_data = 'subscribe_vendor_alerts')
 	markup.add(b1)
 	bot.reply_to(message, "Subscribe Menu :", reply_markup=markup)
+
+@bot.message_handler(commands=['favorised'])
+def send_welcome(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    bot.reply_to(message,listFavoriteCVE(message.chat.id), reply_markup=markup,disable_web_page_preview=True)
  
 @bot.message_handler(commands=['terminology'])
 def send_welcome(message):
@@ -257,6 +266,19 @@ def callback_inline(call):
         markup.add(b1, b2)
         bot.send_message(call.message.chat.id, text="Are you sure you want <b>unsubscribe</b> to <b>vendors/products</b> alerts?", reply_markup=markup)
         bot.answer_callback_query(call.id, "Are you sure?")
+        
+    if call.data == "Favorite":
+        today = date.today()
+        print(today)
+        markup = InlineKeyboardMarkup()
+        bot.answer_callback_query(call.id, "Loading...")
+        bot.edit_message_text(
+            message_id=call.message.id,
+            chat_id=call.message.chat.id,
+            text=(favorite(cveReformated(call.message.reply_to_message.text),today,call.message.chat.id)),
+            reply_markup=call.message.reply_markup,disable_web_page_preview=True
+        )
+
         
     if call.data == "unsubscribe_vendor_alerts_confirm":
         bot.answer_callback_query(call.id, "You unsubscribed to allergie alerts")

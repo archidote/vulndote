@@ -1,6 +1,7 @@
 from numpy import product
 from assets.controller import * 
 import urllib3
+import sqlite3
 import html 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -135,6 +136,41 @@ def timeOutAPI() : # TO-DO
     except : 
         return True # Api can't be reached ! 
 
+def hello(chat_id,first_name,started_bot_date): 
+    
+    conn = sqlite3.connect('assets/vulndote.db')
+    cursor = conn.cursor()
+    cursor.execute(f"""INSERT OR IGNORE INTO user(id,first_name,started_bot_date) VALUES ({chat_id},'{first_name}','{started_bot_date}')""")
+    conn.commit()
+    conn.close()
+    
+    return 0
+
+def favorite(cve_id,date_fav,chat_id) : 
+    
+    conn = sqlite3.connect('assets/vulndote.db')
+    cursor = conn.cursor()
+    cursor.execute(f"""INSERT OR IGNORE INTO favorite_cve(cve_id,date_fav,user_id) VALUES ('{cve_id}','{date_fav}',{chat_id})""")
+    conn.commit()
+    conn.close()
+    
+    return "CVE :"+cve_id+" was favorised. \n /favorite to list all your favorised CVE"
+
+def listFavoriteCVE(chat_id) : 
+    
+    conn = sqlite3.connect('assets/vulndote.db')
+    cursor = conn.cursor()
+    cursor.execute(f"""SELECT * FROM favorite_cve WHERE user_id = {chat_id};""")
+    results = cursor.fetchall()
+
+    favList = ""
+    for cve in results:
+        favList += "📍"+cve[1]+"  -  🗓️ - "+cve[2]+"\n    ℹ️ : /Cve@"+cve[1].replace("-", "_")+"\n\n"
+    return favList
+        
+    conn.commit()
+    conn.close()
+    
 # print (impact("CVE-2021-29987"))
 # print(cveReferences("CVE-2021-29987"))
 # print (vulnerableProductsOrVendors("CVE-2017-0144"))
