@@ -167,9 +167,6 @@ def listFavoriteCVE(chat_id) :
     for cve in results:
         favList += "📍"+cve[1]+"  -  🗓️ - "+cve[2]+"\n    ℹ️ : /Cve@"+cve[1].replace("-", "_")+"\n\n"
     return favList
-        
-    conn.commit()
-    conn.close()
     
 # print (impact("CVE-2021-29987"))
 # print(cveReferences("CVE-2021-29987"))
