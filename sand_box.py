@@ -20,7 +20,7 @@ def sendAlertAuto() :
             else : 
                 chatId = row[0]
                 print ("New CVE for :"+row[1]+"")
-                cur.execute(f"""UPDATE subscriber_vendor_alerts SET APIRequest = '{updateOrNot}' WHERE chat_id = '{chatId}';""") # à tester en raw 
+                cur.execute(f"""UPDATE subscriber_vendor_alerts SET api_request = '{updateOrNot}' WHERE chat_id = '{chatId}';""") # à tester en raw 
         else : 
             print ("No CVE / No CVE")
 
@@ -28,6 +28,8 @@ def sendAlertAuto() :
     conn.close()
 
 # faire une fonction pour uniquement la criticité toutes cve confondu 
+
+sendAlertAuto()
 
 schedule.every(5).minutes.do(lambda : sendAlertAuto())
 

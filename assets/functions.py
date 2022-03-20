@@ -154,7 +154,7 @@ def favorite(cve_id,date_fav,chat_id) :
     conn.commit()
     conn.close()
     
-    return "CVE :"+cve_id+" was favorised. \n /favorite to list all your favorised CVE"
+    return "CVE :"+cve_id+" was favorised. \n /favorised to list all your favorised CVE"
 
 def listFavoriteCVE(chat_id) : 
     

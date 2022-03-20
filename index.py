@@ -18,8 +18,9 @@ HELP MENU //
 /cve 
 /today_cve_list
 /today_cve_sorted_by_asset
-/terminology
 /subscribe
+/favorised
+/terminology
 """
 
 # @bot.message_handler(commands=['start'])
@@ -147,11 +148,11 @@ def which_reply(message):
                 bot.reply_to(message, cve, reply_markup=markup)
             
         elif message.reply_to_message.text == "Enter your a vendor/product name to be notifyed." : 
-            APIRequest = cveTodaySortedByVendor(message.text)
-            if APIRequest == "Vendor/Product hasn't been found." :
+            api_request = cveTodaySortedByVendor(message.text)
+            if api_request == "Vendor/Product hasn't been found." :
                 bot.reply_to(message,"Vendor/Product hasn't been found. \n Try again : /subscribe")
             else : 
-                insertSubscriber(str(message.chat.id),"vendor",message.text,APIRequest)
+                insertSubscriber(str(message.chat.id),"vendor",message.text,api_request)
                 bot.reply_to(message,"Subscribed to CVE alert for the following Vendor/Product :"+message.text+"")
 
    
