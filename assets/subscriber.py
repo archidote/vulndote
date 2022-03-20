@@ -13,12 +13,11 @@ def checkIfUserIsAlreadyASubscriber(tableName,chat_id):
         # User does not exist 
         return False
 
-def insertSubscriber(chat_id,asset,vendor,APIRequest) : 
+def insertSubscriber(chat_id,asset,vendor,api_request) : 
     
-    print (chat_id,asset,asset)
     conn = sqlite3.connect('assets/vulndote.db')
     cursor = conn.cursor()
-    cursor.execute(f"""INSERT OR IGNORE INTO subscriber_{asset}_alerts(chat_id,vendor,APIRequest) VALUES ({chat_id},'{vendor}','{APIRequest}')""")
+    cursor.execute(f"""INSERT OR IGNORE INTO subscriber_{asset}_alerts(chat_id,vendor,api_request) VALUES ({chat_id},'{vendor}','{api_request}')""")
     conn.commit()
     conn.close()
     

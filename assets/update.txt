@@ -1,1 +1,1 @@
-UPDATE subscriber_vendor_alerts SET APIRequest = 'dssdqsdqds' WHERE chat_id = '653258620';
+UPDATE subscriber_vendor_alerts SET api_request = 'dssdqsdqds' WHERE chat_id = '653258620';
