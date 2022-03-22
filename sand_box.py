@@ -72,11 +72,11 @@ def sendAlertAutoCVSS() :
         
     conn.close()
     
-sendAlertAutoVendor()
-sendAlertAutoCVSS()
+# sendAlertAutoVendor()
+# sendAlertAutoCVSS()
     
-schedule.every(10).minutes.do(lambda : sendAlertAutoCVSS())
-schedule.every(11).minutes.do(lambda : sendAlertAutoVendor())
+# schedule.every(10).minutes.do(lambda : sendAlertAutoCVSS())
+# schedule.every(11).minutes.do(lambda : sendAlertAutoVendor())
 
 while 1:
     schedule.run_pending()
