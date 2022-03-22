@@ -1,5 +1,6 @@
 from numpy import product
 from assets.controller import * 
+from datetime import *
 import urllib3
 import sqlite3
 import html 
@@ -22,7 +23,7 @@ def cveSearch(cveCode) :
         cve += "<strong>CVE ID</strong> : "+data["id"]+"\n"
         cve += "<strong>CVSS</strong> : "+cvssScale((data["id"]))+"\n"
         cve += "<strong>Summary</strong> : "+html.escape(data["summary"],quote=True)+"\n"
-        cve += "<strong>Published/Updated</strong> : "+data["updated_at"]+"\n\n"
+        cve += "<strong>Published/Updated</strong> : "+formatDateAndTime(data["updated_at"])+"\n\n"
         return cve 
 
 def cvssScale(cve): 
@@ -129,7 +130,7 @@ def cveReformated(cveNotFormated) :
     
     return cveReFormated
 
-def timeOutAPI() : # TO-DO
+def timeOutAPI() : 
     try : 
         r = session.get("https://www.opencve.io/")
         return False
@@ -146,15 +147,17 @@ def hello(chat_id,first_name,started_bot_date):
     
     return 0
 
-def favorite(cve_id,date_fav,chat_id) : 
-    
+def favorite(cve_id,chat_id) :         
+            
+    today = date.today()
     conn = sqlite3.connect('assets/vulndote.db')
     cursor = conn.cursor()
-    cursor.execute(f"""INSERT OR IGNORE INTO favorite_cve(cve_id,date_fav,user_id) VALUES ('{cve_id}','{date_fav}',{chat_id})""")
+    cursor.execute(f"""INSERT OR IGNORE INTO favorite_cve(cve_id,date_fav,user_id) VALUES ('{cve_id}','{today}',{chat_id})""")
     conn.commit()
     conn.close()
+    return "saved as a fav"
     
-    return "CVE :"+cve_id+" was favorised. \n /favorised to list all your favorised CVE"
+    # return "CVE :"+cve_id+" was favorised. \n /favorised to list all your favorised CVE"
 
 def listFavoriteCVE(chat_id) : 
     
@@ -167,7 +170,29 @@ def listFavoriteCVE(chat_id) :
     for cve in results:
         favList += "📍"+cve[1]+"  -  🗓️ - "+cve[2]+"\n    ℹ️ : /Cve@"+cve[1].replace("-", "_")+"\n\n"
     return favList
+
+def isThisCVEIsFavorised(chat_id,cve) : 
     
+    conn = sqlite3.connect('assets/vulndote.db')
+    cursor = conn.cursor()
+    cursor.execute(f"""SELECT cve_id,user_id FROM favorite_cve WHERE user_id = {chat_id} AND cve_id = '{cve}';""")
+    results = cursor.fetchall()
+    conn.commit()
+    conn.close()
+
+    if len(results) == 0 : 
+        return "CVE is not registered as a fav asset."
+    else : 
+        fav = ""
+        for cve in results:
+            fav += "You have already favorised this cve."        
+        return fav
+    
+
+    
+def formatDateAndTime(date) : 
+    d = datetime.fromisoformat(date[:-1]).astimezone(timezone.utc)
+    return d.strftime('%Y-%m-%d at %H:%M:%S')
 # print (impact("CVE-2021-29987"))
 # print(cveReferences("CVE-2021-29987"))
 # print (vulnerableProductsOrVendors("CVE-2017-0144"))

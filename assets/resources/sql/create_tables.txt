@@ -1,0 +1,24 @@
+CREATE TABLE subscriber_vendor_alerts (
+    chat_id INTEGER,
+    vendor TEXT,
+    api_request TEXT
+);
+CREATE TABLE subscriber_cvss_alerts (
+    chat_id INTEGER,
+    vendor TEXT,
+    api_request TEXT
+);
+CREATE TABLE IF NOT EXISTS user (
+        id INTEGER NOT NULL,
+        first_name TEXT,
+        started_bot_date TEXT,
+        PRIMARY KEY(id)
+);
+CREATE TABLE IF NOT EXISTS favorite_cve (
+        id INTEGER,
+        cve_id TEXT,
+        date_fav TEXT,
+        user_id INTEGER,
+        PRIMARY KEY(id AUTOINCREMENT),
+        FOREIGN KEY(user_id) REFERENCES user(id)
+);
