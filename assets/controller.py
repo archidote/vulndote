@@ -1,12 +1,11 @@
 import requests
 import os
 
-oldURLApi = "https://cve.circl.lu/api/"
-vulndoteUser = os.environ.get('vulndoteUser')
-vulndotePassword = os.environ.get('vulndotePassword')
-telegramBotToken = os.environ.get('telegramBotToken')
-GITHUB_ACCESS_TOKEN = os.environ.get('gihtubArchidoteTokenReadPublicRepos')
+VULNDOTE_API_USERNAME = os.environ.get('VULNDOTE_API_USERNAME')
+VULNDOTE_API_PASSWORD = os.environ.get('VULNDOTE_API_PASSWORD')
+TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+GITHUB_TOKEN_READ_ONLY_PUBLIC_REPOSITORY = os.environ.get('GITHUB_TOKEN_READ_ONLY_PUBLIC_REPOSITORY')
 
 session = requests.Session()
-session.auth = (vulndoteUser, vulndotePassword)
+session.auth = (VULNDOTE_API_USERNAME, VULNDOTE_API_PASSWORD)
 auth = session.post('https://www.opencve.io/api/')

@@ -1,5 +1,0 @@
-CREATE TABLE subscriber_vendor_alerts (
-    chat_id INTEGER,
-    vendor TEXT,
-    api_request TEXT
-);

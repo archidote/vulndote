@@ -10,7 +10,7 @@ from assets.PoCExploits import *
 from assets.PoCExploits import * 
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-bot = telebot.TeleBot(telegramBotToken,parse_mode="HTML")
+bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN,parse_mode="HTML")
 
 help = """
 HELP MENU //
@@ -22,12 +22,6 @@ HELP MENU //
 /favorised
 /terminology
 """
-
-# @bot.message_handler(commands=['start'])
-# def send_welcome(message):
-# 	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-# 	bot.reply_to(message, "Hey "+message.from_user.first_name+"👋 Welcome to vulndote bot ! tap /help to know supported command 😊", reply_markup=markup)
-
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -52,9 +46,9 @@ def send_welcome(message):
     else : 
         reFormatedCVE = cveReformated(message.text)
         markup = InlineKeyboardMarkup()
-        b1 = InlineKeyboardButton(text='Products Affected',callback_data='Products_Affected')
-        b2 = InlineKeyboardButton(text='References', callback_data='References')
-        b3 = InlineKeyboardButton(text='More info', callback_data='More_Info')
+        b1 = InlineKeyboardButton(text='💻/📦 Affected',callback_data='Products_Affected')
+        b2 = InlineKeyboardButton(text='📖 Ref', callback_data='References')
+        b3 = InlineKeyboardButton(text='ℹ️', callback_data='More_Info')
         b4 = InlineKeyboardButton(text='🔍 PoC on sploitus ?', callback_data='Available_Exploits_With_Sploitus')
         b5 = InlineKeyboardButton(text='🔍 PoC on Github ?', callback_data='Available_Exploits_Only_With_Github')
         b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
@@ -127,10 +121,11 @@ def which_reply(message):
             markup = InlineKeyboardMarkup()
             b1 = InlineKeyboardButton(text='Products Affected',callback_data='Products_Affected')
             b2 = InlineKeyboardButton(text='References',callback_data='References')
-            b3 = InlineKeyboardButton(text='More info',callback_data='More_Info')
-            b4 = InlineKeyboardButton(text='search Exploit with sploitus', callback_data='Available_Exploits_With_Sploitus')
-            b5 = InlineKeyboardButton(text='search Exploit with sploitus', callback_data='Available_Exploits_Only_With_Github')
-            markup.add(b1, b2, b3, b4, b5)
+            b3 = InlineKeyboardButton(text='ℹ️',callback_data='More_Info')
+            b4 = InlineKeyboardButton(text='🔍 PoC on sploitus ?', callback_data='Available_Exploits_With_Sploitus')
+            b5 = InlineKeyboardButton(text='🔍 PoC on Github ?', callback_data='Available_Exploits_Only_With_Github')
+            b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
+            markup.add(b1, b2, b3, b4, b5, b6)
             bot.reply_to(message, cveSearch(message.text),
                          reply_markup=markup)
         elif message.reply_to_message.text == 'eEnter a Vendor :':
@@ -269,16 +264,26 @@ def callback_inline(call):
         bot.answer_callback_query(call.id, "Are you sure?")
         
     if call.data == "Favorite":
-        today = date.today()
-        print(today)
         markup = InlineKeyboardMarkup()
+        
         bot.answer_callback_query(call.id, "Loading...")
-        bot.edit_message_text(
+        cveReformatedVar = cveReformated(call.message.reply_to_message.text)
+        favorisedORNot = isThisCVEIsFavorised(call.message.chat.id,cveReformatedVar)
+        print (favorisedORNot)
+        if favorisedORNot == "You have already favorised this cve." :
+            bot.edit_message_text(
             message_id=call.message.id,
             chat_id=call.message.chat.id,
-            text=(favorite(cveReformated(call.message.reply_to_message.text),today,call.message.chat.id)),
-            reply_markup=call.message.reply_markup,disable_web_page_preview=True
-        )
+            text="You have already favorised this cve.",
+            reply_markup=call.message.reply_markup
+            )
+        else : 
+            bot.edit_message_text(
+            message_id=call.message.id,
+            chat_id=call.message.chat.id,
+            text=(favorite(cveReformatedVar,call.message.chat.id)),
+            reply_markup=call.message.reply_markup
+            )
 
         
     if call.data == "unsubscribe_vendor_alerts_confirm":
