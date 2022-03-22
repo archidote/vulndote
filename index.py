@@ -15,12 +15,13 @@ bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN,parse_mode="HTML")
 help = """
 HELP MENU //
 
-/cve 
-/today_cve_list
+/cve
+/today_cve_list 
 /today_cve_sorted_by_asset
 /subscribe
 /favorised
 /terminology
+
 """
 
 @bot.message_handler(commands=['start'])
@@ -35,6 +36,7 @@ def send_welcome(message):
     if timeOutAPI() == True : 
         bot.reply_to(message, "Api is not reachable at the moment")
     else : 
+        print ()
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup = telebot.types.ForceReply()
         bot.reply_to(message, "Enter a CVE code :", reply_markup=markup)
