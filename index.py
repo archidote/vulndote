@@ -291,4 +291,5 @@ def callback_inline(call):
     if call.data == "unsubscribe_vendor_alerts_confirm":
         bot.answer_callback_query(call.id, "You unsubscribed to allergie alerts")
         bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=deleteSubscriber("vendor",call.message.chat.id))
+        
 bot.infinity_polling()  # Bot Exec

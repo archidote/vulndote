@@ -38,7 +38,6 @@ def sendAlertAutoVendor() :
         
     conn.close()
 
-
 def sendAlertAutoCVSS() : 
     
     conn = sqlite3.connect('assets/vulndote.db')
@@ -71,15 +70,35 @@ def sendAlertAutoCVSS() :
             return response.json()
         
     conn.close()
-    
-sendAlertAutoVendor()
-sendAlertAutoCVSS()
-    
-schedule.every(10).minutes.do(lambda : sendAlertAutoCVSS())
-schedule.every(11).minutes.do(lambda : sendAlertAutoVendor())
 
-while 1:
-    schedule.run_pending()
-    time.sleep(1)
+def sendAlertAutoVendorV2(chat_id,vendor) : 
+    
+    conn = sqlite3.connect('assets/vulndote.db')
+    cur = conn.cursor()
+    cur.execute(f"""SELECT * FROM subscriber_vendor_alerts WHERE chat_id = {chat_id} """)
+    
+    rows = cur.fetchall()
+    
+    response = session.get('https://www.opencve.io/api/cve?vendor='+vendor)
+    data = response.json() 
 
-# print(isThisCVEIsFavorised(653258620,"CVE-2021-4034d"))
+    if "message" in data : 
+        return "Vendor/Product hasn't been found."
+    else : 
+        
+        today = now = datetime.now()
+        today = now.strftime("%Y-%m-%d")
+    
+        for row in rows:
+            for i in range(len(data)):
+                if today in formatDate(data[i]["updated_at"]):
+                    if data[i]["id"] in row[2]: 
+                        print (data[i]["id"])
+                        # CVE déjà présente dans la table 
+                    else : 
+                        print ("NEW CVE \n"+data[i]["id"])
+                        #cur.execute(f"""UPDATE subscriber_vendor_alerts SET api_request = '{cve}' WHERE chat_id = '{chat_id}';""") # à tester en raw 
+                    
+        
+print(sendAlertAutoVendorV2(653258620,"Linux"))
+# print (collectCVE_ID_TodaySortedByVendor("Linux",653258620))
