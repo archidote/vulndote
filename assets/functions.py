@@ -1,6 +1,5 @@
-from numpy import product
+from datetime import timezone
 from assets.controller import * 
-from datetime import *
 import urllib3
 import sqlite3
 import html 
@@ -149,7 +148,6 @@ def hello(chat_id,first_name,started_bot_date):
 
 def favorite(cve_id,chat_id) :         
             
-    today = date.today()
     conn = sqlite3.connect('assets/vulndote.db')
     cursor = conn.cursor()
     cursor.execute(f"""INSERT OR IGNORE INTO favorite_cve(cve_id,date_fav,user_id) VALUES ('{cve_id}','{today}',{chat_id})""")
@@ -159,6 +157,16 @@ def favorite(cve_id,chat_id) :
     
     # return "CVE :"+cve_id+" was favorised. \n /favorised to list all your favorised CVE"
 
+
+def test() : 
+    
+    conn = sqlite3.connect('assets/vulndote.db')
+    cur = conn.cursor()
+    cur.execute(f"""SELECT * FROM subscriber_vendor_alerts """)
+    rows = cur.fetchall()
+    for row in rows:
+        print (row)
+        
 def listFavoriteCVE(chat_id) : 
     
     conn = sqlite3.connect('assets/vulndote.db')
