@@ -1,13 +1,12 @@
-from datetime import date
 import telebot
-import datetime
 from telebot import *
 from assets.subscriber import checkIfUserIsAlreadyASubscriber, deleteSubscriber, insertSubscriber
-from assets.todayCVE import * 
+from assets.cveToday import * 
 from assets.controller import * 
 from assets.functions import * 
-from assets.PoCExploits import * 
-from assets.PoCExploits import * 
+from assets.cvePoCExploits import * 
+from assets.cveAdditionalInformation import * 
+from assets.favorite import * 
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN,parse_mode="HTML")

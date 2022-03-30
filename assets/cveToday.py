@@ -2,6 +2,7 @@ import html
 from datetime import *
 from assets.controller import * 
 from assets.functions import *
+from assets.cveAdditionalInformation import *
 
 def cveTodaySortedByVendor(vendor) :  
     
@@ -121,11 +122,6 @@ def cveTodayNotSorted() :
                 cve += "<b>Summary</b> : "+html.escape(data[i]["summary"],quote=True)+"\n"
                 cve += "<b>Published/Updated</b> : "+formatDateAndTime(data[i]["updated_at"])+"\n\n"
     return cve  
-
-def formatDate(rawDate) :
-    
-    res = rawDate.split("T")[0]
-    return res
 
 
 # print (cveTodaySortedByVendor("microsoft"))

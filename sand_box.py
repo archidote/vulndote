@@ -1,7 +1,7 @@
 import schedule
 import sqlite3
 import time as t
-from assets.todayCVE import * 
+from assets.cveToday import * 
 from assets.functions import * 
 
 def sendAlertAutoVendorV2() : 
