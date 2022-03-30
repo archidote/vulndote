@@ -1,7 +1,6 @@
 numpy==1.21.5
 PyGithub==1.55
 pyTelegramBotAPI==4.4.0
-pytest==6.2.5
 requests==2.25.1
 schedule==1.1.0
-urllib3==1.26.8
+urllib3==1.26.9
