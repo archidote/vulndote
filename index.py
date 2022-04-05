@@ -55,8 +55,7 @@ def send_welcome(message):
         b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
         markup.add(b1, b2, b3, b4, b5, b6)
         bot.reply_to(message, cveSearch(reFormatedCVE), reply_markup=markup)
-
-
+        
 @bot.message_handler(commands=['today_cve_list'])
 def send_welcome(message):
     if timeOutAPI() == True : 
@@ -69,6 +68,7 @@ def send_welcome(message):
         b4 = InlineKeyboardButton(text='/low')
         markup.add(b1, b2, b3, b4)
         bot.reply_to(message, "Choose :",reply_markup=markup)
+        
  
 @bot.message_handler(commands=['critical','high','medium','low'])
 def send_welcome(message):
@@ -95,6 +95,7 @@ def send_welcome(message):
         markup = telebot.types.ForceReply()
         bot.reply_to(message, "eEnter a Vendor :", reply_markup=markup)
         
+       
 @bot.message_handler(commands=['subscribe'])
 def send_welcome(message):
 	markup = InlineKeyboardMarkup()	
@@ -148,7 +149,7 @@ def which_reply(message):
             if api_request == "Vendor/Product hasn't been found." :
                 bot.reply_to(message,"Vendor/Product hasn't been found. \n Try again : /subscribe")
             else : 
-                insertSubscriber(str(message.chat.id),"vendor",message.text,api_request)
+                insertSubscriber(str(message.chat.id),"vendor",message.text,"")
                 bot.reply_to(message,"Subscribed to CVE alert for the following Vendor/Product :"+message.text+"")
 
    
