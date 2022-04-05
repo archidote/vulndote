@@ -19,17 +19,12 @@ def cveTodaySortedByVendor(vendor) :
         cve = ""
         for i in range(len(data)):
             if today in formatDate(data[i]["updated_at"]):
-                cve += "<b>CVE ID</b> : "+data[i]["id"]+"\n"
-                cve += "<b>CVSS</b> : "+cvssScale((data[i]["id"]))+"\n"
-                cve += "<b>Summary</b> : "+html.escape(data[i]["summary"],quote=True)+"\n"
-                cve += "<b>Published/Updated</b> : "+data[i]["updated_at"]+"\n\n"
-                cveIdFormated=data[i]["id"].replace("-", "_")
-                cve += "More Info ? : /Cve@"+cveIdFormated+"\n"
+                cve += cveCommonInfo(data[i])
         if cve : # IF cve variable is not empty 
             cve += "<b><i>Sort CVE by</i> : </b> "
             return cve  
         else : 
-            return "No CVE"
+            return "No CVE(s) have been registered today for this vendor/product."
 
 def collectCVE_ID_TodaySortedByVendor(vendor,chat_id) :  
     
@@ -56,7 +51,7 @@ def collectCVE_ID_TodaySortedByVendor(vendor,chat_id) :
             conn.close()
             return cve  
         else : 
-            return "No CVE(s) have been registered today </b>"
+            return "No CVE(s) have been registered today for this vendor/product."
 
 def cveTodaySortedByCVSS(cvss) :  
     
@@ -69,12 +64,7 @@ def cveTodaySortedByCVSS(cvss) :
     cve = ""
     for i in range(len(data)):
         if today in formatDate(data[i]["updated_at"]):
-                cve += "<b>CVE ID</b> : "+data[i]["id"]+"\n"
-                cve += "<b>CVSS</b> : "+cvssScale((data[i]["id"]))+"\n"
-                cve += "<b>Summary</b> : "+html.escape(data[i]["summary"],quote=True)+"\n"
-                cve += "<b>Published/Updated</b> : "+formatDateAndTime(data[i]["updated_at"])+"\n\n"
-                cveIdFormated=data[i]["id"].replace("-", "_")
-                cve += "More Info ? : /Cve@"+cveIdFormated+"\n\n"
+            cve += cveCommonInfo(data[i])
     if cve : # IF cve variable is not empty 
         return cve  
     else : 
@@ -94,12 +84,7 @@ def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok
         cve = ""
         for i in range(len(data)):
             if today in formatDate(data[i]["updated_at"]):
-                cve += "<b>CVE ID</b> : "+data[i]["id"]+"\n"
-                cve += "<b>CVSS</b> : "+cvssScale((data[i]["id"]))+"\n"
-                cve += "<b>Summary</b> : "+html.escape(data[i]["summary"],quote=True)+"\n"
-                cve += "<b>Published/Updated</b> : "+formatDateAndTime(data[i]["updated_at"])+"\n\n"
-                cveIdFormated=data[i]["id"].replace("-", "_")
-                cve += "More Info ? : /Cve@"+cveIdFormated+"\n\n"
+                cve += cveCommonInfo(data[i])
         if cve : # IF cve variable is not empty 
             cve += "<b><i>Sort CVE by</i> : </b> "
             return cve  
@@ -117,12 +102,8 @@ def cveTodayNotSorted() :
     cve = ""
     for i in range(len(data)):
         if today == formatDate(data[i]["updated_at"]):
-                cve += "<b>CVE ID</b> : "+data[i]["id"]+"\n"
-                cve += "<b>CVSS</b> : "+cvssScale((data[i]["id"]))+"\n"
-                cve += "<b>Summary</b> : "+html.escape(data[i]["summary"],quote=True)+"\n"
-                cve += "<b>Published/Updated</b> : "+formatDateAndTime(data[i]["updated_at"])+"\n\n"
+            cve += cveCommonInfo(data[i])
     return cve  
-
 
 # print (cveTodaySortedByVendor("microsoft"))
 # print (cveTodaySortedByCVSS("critical"))

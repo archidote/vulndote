@@ -1,2 +1,2 @@
 INSERT OR IGNORE INTO subscriber_vendor_alerts(chat_id,vendor,api_request) VALUES ('653258620','Microsoft','');
-INSERT OR IGNORE INTO subscriber_cvss_alerts(chat_id,vendor,api_request) VALUES ('653258620','High','');
+INSERT OR IGNORE INTO subscriber_vendor_alerts(chat_id,vendor,api_request) VALUES ('5225964450','Linux','');

@@ -3,6 +3,7 @@ from assets.functions import *
 
 def cveSearch(cveCode) : 
     
+    cveCode = cveReformated(cveCode)
     if timeOutAPI() == True : 
         return "Api is not reachable at the moment"
     
@@ -14,26 +15,38 @@ def cveSearch(cveCode) :
         return "CVE not found."
         
     else :
-        cve = "" 
-        cve += "<strong>CVE ID</strong> : "+data["id"]+"\n"
-        cve += "<strong>CVSS</strong> : "+cvssScale((data["id"]))+"\n"
-        cve += "<strong>Summary</strong> : "+html.escape(data["summary"],quote=True)+"\n"
-        cve += "<strong>Published/Updated</strong> : "+formatDateAndTime(data["updated_at"])+"\n\n"
-        return cve 
+        cveInfo = ""
+        cveInfo += "<b>CVE ID</b> : "+data["id"]+"\n"
+        cveInfo += "<b>CVSS</b> "+cvssScale((data["id"]))+"\n"
+        cveInfo += "<b>Summary</b> : "+html.escape(data["summary"],quote=True)+"\n"
+        cveInfo += "<b>Published/Updated</b> : "+data["updated_at"]+"\n\n"
+        cveIdFormated=data["id"].replace("-", "_")
+        cveInfo += "ℹ️ : /Cve@"+cveIdFormated+"\n\n"
+        return cveInfo
 
 def cvssScale(cve): 
     
     response = session.get('https://www.opencve.io/api/cve/'+cve+'')
     data = response.json() 
-
-    if data["cvss"]["v3"] < 4 : 
-        return ""+str(data["cvss"]["v3"])+" 🔵"
-    elif data["cvss"]["v3"] < 7 : 
-        return ""+str(data["cvss"]["v3"])+" 🟠" 
-    elif data["cvss"]["v3"] < 9 : 
-        return ""+str(data["cvss"]["v3"])+" 🔴"
+    
+    if data["cvss"]["v3"] != None :
+        if data["cvss"]["v3"] < 4 : 
+            return "v3 : "+str(data["cvss"]["v3"])+" 🔵"
+        elif data["cvss"]["v3"] < 7 : 
+            return "v3 : "+str(data["cvss"]["v3"])+" 🟠" 
+        elif data["cvss"]["v3"] < 9 : 
+            return "v3 : "+str(data["cvss"]["v3"])+" 🔴"
+        else : 
+            return "v3 : "+str(data["cvss"]["v3"])+" ⚫"
     else : 
-        return ""+str(data["cvss"]["v3"])+" ⚫"
+        if data["cvss"]["v2"] < 4 : 
+            return "v2 : "+str(data["cvss"]["v2"])+" 🔵"
+        elif data["cvss"]["v2"] < 7 : 
+            return "v2 : "+str(data["cvss"]["v2"])+" 🟠" 
+        elif data["cvss"]["v2"] < 9 : 
+            return "v2 : "+str(data["cvss"]["v2"])+" 🔴"
+        else : 
+            return "v2 : "+str(data["cvss"]["v2"])+" ⚫"
 
 def cveReferences(cve) :
     
@@ -98,3 +111,22 @@ def moreInfo(cve) :
         impact += "<i>If you don't understand terms</i> : /terminology"
         
         return impact 
+    
+def cveCommonInfo(data) :
+               
+    cveInfo = ""
+    cveInfo += "<b>CVE ID</b> : "+data["id"]+"\n"
+    cveInfo += "<b>CVSS</b> "+cvssScale((data["id"]))+"\n"
+    cveInfo += "<b>Summary</b> : "+html.escape(cutSummary(data["id"],data["summary"]),quote=True)+"\n"
+    cveInfo += "<b>Published/Updated</b> : "+data["updated_at"]+"\n\n"
+    cveIdFormated=data["id"].replace("-", "_")
+    cveInfo += "ℹ️ : /Cve@"+cveIdFormated+"\n\n"
+    return cveInfo
+
+def cutSummary(cveID,summary) :
+
+    cveIdFormated=cveID.replace("-", "_")
+    if len(summary) > 400 :
+        return summary[:400]+"(...)"
+    else :
+        return summary
