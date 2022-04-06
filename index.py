@@ -281,7 +281,6 @@ def callback_inline(call):
         favorisedORNot = isThisCVEIsFavorised(call.message.chat.id,cveReformatedVar)
         
         if favorisedORNot == "You have already favorised this cve." :
-            cveFormatedForRegex
             bot.reply_to(call.message,"You have already favorised this cve "+cveReformatedVar+" if you want unfav it, click on here : /unfav@"+cveFormatedForRegex(cveReformatedVar)+"",parse_mode="html")
         else : 
             bot.edit_message_text(
