@@ -35,7 +35,6 @@ def send_welcome(message):
     if timeOutAPI() == True : 
         bot.reply_to(message, "Api is not reachable at the moment")
     else : 
-        print ()
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup = telebot.types.ForceReply()
         bot.reply_to(message, "Enter a CVE code :", reply_markup=markup)
@@ -107,6 +106,15 @@ def send_welcome(message):
 def send_welcome(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     bot.reply_to(message,listFavoriteCVE(message.chat.id), reply_markup=markup,disable_web_page_preview=True)
+    
+@bot.message_handler(regexp="^/unfav@*")
+def send_welcome(message):
+    if timeOutAPI() == True : 
+        bot.reply_to(message, "Api is not reachable at the moment")
+    else : 
+        reFormatedCVE = cveReformated(message.text)
+        bot.reply_to(message,unfav(message.chat.id,reFormatedCVE),disable_web_page_preview=True)
+        
  
 @bot.message_handler(commands=['terminology'])
 def send_welcome(message):
@@ -266,19 +274,15 @@ def callback_inline(call):
         bot.answer_callback_query(call.id, "Are you sure?")
         
     if call.data == "Favorite":
-        markup = InlineKeyboardMarkup()
+        print (call.message.reply_to_message.text)
         
         bot.answer_callback_query(call.id, "Loading...")
         cveReformatedVar = cveReformated(call.message.reply_to_message.text)
         favorisedORNot = isThisCVEIsFavorised(call.message.chat.id,cveReformatedVar)
-        print (favorisedORNot)
+        
         if favorisedORNot == "You have already favorised this cve." :
-            bot.edit_message_text(
-            message_id=call.message.id,
-            chat_id=call.message.chat.id,
-            text="You have already favorised this cve.",
-            reply_markup=call.message.reply_markup
-            )
+            cveFormatedForRegex
+            bot.reply_to(call.message,"You have already favorised this cve "+cveReformatedVar+" if you want unfav it, click on here : /unfav@"+cveFormatedForRegex(cveReformatedVar)+"",parse_mode="html")
         else : 
             bot.edit_message_text(
             message_id=call.message.id,
@@ -291,5 +295,6 @@ def callback_inline(call):
     if call.data == "unsubscribe_vendor_alerts_confirm":
         bot.answer_callback_query(call.id, "You unsubscribed to allergie alerts")
         bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=deleteSubscriber("vendor",call.message.chat.id))
+        
         
 bot.infinity_polling()  # Bot Exec
