@@ -41,3 +41,13 @@ def isThisCVEIsFavorised(chat_id,cve) :
         for cve in results:
             fav += "You have already favorised this cve."        
         return fav
+    
+def unfav(chat_id,cve) : # Faire une deuxième req select après pour vérifier si la a bien été viré de la table ou non (favorite_cve) condition if else et vérifier la longueur du tableau results
+    conn = sqlite3.connect('assets/vulndote.db')
+    cursor = conn.cursor()
+    cursor.execute(f"""DELETE FROM favorite_cve WHERE user_id = {chat_id} AND cve_id = '{cve}';""")
+    results = cursor.fetchall()
+    conn.commit()
+    conn.close()
+    print (results)
+    return "CVE :"+cve+" was removed from your fav list."

@@ -28,7 +28,14 @@ def cveReformated(cveNotFormated) :
     cveReFormated = cveNotFormated
     cveReFormated = cveReFormated.replace("_", "-")
     cveReFormated = cveReFormated.replace("/Cve@", "")
-    cveReFormated = cveReFormated.replace("/more@", "")
+    cveReFormated = cveReFormated.replace("/unfav@", "")
+    
+    return cveReFormated
+
+def cveFormatedForRegex(cveNotFormated) : 
+    
+    cveReFormated = cveNotFormated
+    cveReFormated = cveReFormated.replace("-", "_")
     
     return cveReFormated
 

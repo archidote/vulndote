@@ -20,8 +20,8 @@ def cveSearch(cveCode) :
         cveInfo += "<b>CVSS</b> "+cvssScale((data["id"]))+"\n"
         cveInfo += "<b>Summary</b> : "+html.escape(data["summary"],quote=True)+"\n"
         cveInfo += "<b>Published/Updated</b> : "+data["updated_at"]+"\n\n"
-        cveIdFormated=data["id"].replace("-", "_")
-        cveInfo += "ℹ️ : /Cve@"+cveIdFormated+"\n\n"
+        cveIdFormated=cveFormatedForRegex(data["id"])
+        cveInfo += "/Cve@"+cveIdFormated
         return cveInfo
 
 def cvssScale(cve): 
