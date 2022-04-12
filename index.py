@@ -77,13 +77,13 @@ def send_welcome(message):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         asset = message.text 
         asset = asset.replace('/','')
-        var_data = bot.send_message(message.from_user.id,"Loading...⌛")
+        loading = bot.send_message(message.from_user.id,"Loading...⌛")
         cve = cveTodaySortedByCVSS(asset)
         if len(cve) > 4096 :
             for x in range(0, len(cve), 4096): # Allow vulndote to send big GLOBAL message (split in x messages)
                 bot.reply_to(message, text=cve[x:x+4096],reply_markup=markup) # Message edit don't work for a big message, because the last message ate the previous's
         else : 
-            bot.edit_message_text(cve, var_data.chat.id, var_data.message_id)
+            bot.edit_message_text(cve, loading.chat.id, loading.message_id)
 
 @bot.message_handler(commands=['today_cve_sorted_by_asset'])
 def send_welcome(message):
@@ -104,8 +104,19 @@ def send_welcome(message):
 
 @bot.message_handler(commands=['favorised'])
 def send_welcome(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    bot.reply_to(message,listFavoriteCVE(message.chat.id), reply_markup=markup,disable_web_page_preview=True)
+    markup = InlineKeyboardMarkup()
+    b1 = InlineKeyboardButton(text='This year',callback_data='Fav_Sorted_By_This_Year')
+    b2 = InlineKeyboardButton(text='This Month',callback_data='Fav_Sorted_By_This_Month')
+    b3 = InlineKeyboardButton(text='Last Month',callback_data='Fav_Sorted_By_Last_Month')
+    markup.add(b1,b2,b3)
+    CVEs = listFavoriteCVE(message.chat.id)
+    loading = bot.send_message(message.from_user.id,"Loading...⌛")
+    if len(CVEs) > 4096 :
+        for x in range(0, len(CVEs), 4096): # Allow vulndote to send big GLOBAL message (split in x messages)
+            bot.reply_to(message, text=CVEs[x:x+4096],reply_markup=markup) # Message edit don't work for a big message, because the last message ate the previous's
+    else : 
+        bot.edit_message_text(CVEs, loading.chat.id, loading.message_id,reply_markup=markup)
+
     
 @bot.message_handler(regexp="^/unfav@*")
 def send_welcome(message):
@@ -274,19 +285,53 @@ def callback_inline(call):
         bot.answer_callback_query(call.id, "Are you sure?")
         
     if call.data == "Favorite":
-        print (call.message.reply_to_message.text)
         
         bot.answer_callback_query(call.id, "Loading...")
         cveReformatedVar = cveReformated(call.message.reply_to_message.text)
         favorisedORNot = isThisCVEIsFavorised(call.message.chat.id,cveReformatedVar)
         
         if favorisedORNot == "You have already favorised this cve." :
-            bot.reply_to(call.message,"You have already favorised this cve "+cveReformatedVar+" if you want unfav it, click on here : /unfav@"+cveFormatedForRegex(cveReformatedVar)+"",parse_mode="html")
+            bot.reply_to(call.message,"You have already favorised this cve "+cveReformatedVar+" if you want unfav it, click on here : /unfav@"+cveFormatedForRegex(cveReformatedVar)+"")
         else : 
             bot.edit_message_text(
             message_id=call.message.id,
             chat_id=call.message.chat.id,
             text=(favorite(cveReformatedVar,call.message.chat.id)),
+            reply_markup=call.message.reply_markup
+            )
+
+    # if call.data == "Fav_Sorted_By_Vendor":
+    #     bot.answer_callback_query(call.id, "Loading...")
+    #     cveReformatedVar = cveReformated(call.message.reply_to_message.text)
+    #     favorisedORNot = isThisCVEIsFavorised(call.message.chat.id,cveReformatedVar)
+    
+    if call.data == "Fav_Sorted_By_This_Year":
+        
+        bot.answer_callback_query(call.id, "Loading...")
+        bot.edit_message_text(
+            message_id=call.message.id,
+            chat_id=call.message.chat.id,
+            text=(listFavoriteCVESortedByYear(call.message.chat.id)),
+            reply_markup=call.message.reply_markup
+            )
+        
+    if call.data == "Fav_Sorted_By_This_Month":
+        
+        bot.answer_callback_query(call.id, "Loading...")
+        bot.edit_message_text(
+            message_id=call.message.id,
+            chat_id=call.message.chat.id,
+            text=(listFavoriteCVESortedByThisMonth(call.message.chat.id)),
+            reply_markup=call.message.reply_markup
+            )
+        
+    if call.data == "Fav_Sorted_By_Last_Month":
+        
+        bot.answer_callback_query(call.id, "Loading...")
+        bot.edit_message_text(
+            message_id=call.message.id,
+            chat_id=call.message.chat.id,
+            text=(listFavoriteCVESortedByPreviousMonth(call.message.chat.id)),
             reply_markup=call.message.reply_markup
             )
 
