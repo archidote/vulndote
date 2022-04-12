@@ -30,7 +30,6 @@ def sendAlertAutoVendor() :
                     newCVEs += "\n\n"
                     print ("new CVE : "+data[i]["id"])
                     print (newCVEs)
-                    # markup="""{"inline_keyboard":[[{"text":"Unsubscribe","callback_data":"unsubscribe_cvss_alerts"}],[{"text":"🔄 Refresh","callback_data":"refresh_cvss_request_from_alert"}]]}"""
                     send_text = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage?chat_id=' + str(chat_id)+ '&parse_mode=HTML&text=' + newCVEs + ''
                     response = requests.get(send_text)
                 else : 

@@ -21,7 +21,7 @@ def cveSearch(cveCode) :
         cveInfo += "<b>Summary</b> : "+html.escape(data["summary"],quote=True)+"\n"
         cveInfo += "<b>Published/Updated</b> : "+data["updated_at"]+"\n\n"
         cveIdFormated=cveFormatedForRegex(data["id"])
-        cveInfo += "/Cve@"+cveIdFormated
+        #cveInfo += "/Cve@"+cveIdFormated
         return cveInfo
 
 def cvssScale(cve): 
