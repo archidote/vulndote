@@ -1,6 +1,7 @@
 
 import sqlite3
 import datetime as dt
+from unittest import result
 from assets.controller import *
 from assets.functions import cveFormatedForRegex 
 
@@ -11,7 +12,7 @@ def favorite(cve_id,chat_id) :
     cursor.execute(f"""INSERT OR IGNORE INTO favorite_cve(cve_id,date_fav,user_id) VALUES ('{cve_id}','{today}',{chat_id})""")
     conn.commit()
     conn.close()
-    return cve_id+" was added to your fav list. 📒\n/favorised"
+    return cve_id+" was added to your fav list. 📒\nTap /favorised to show your fav list."
 
 
 def listFavoriteCVE(chat_id) : 
@@ -99,7 +100,14 @@ def isThisCVEIsFavorised(chat_id,cve) :
 def unfav(chat_id,cve) : # Faire une deuxième req select après pour vérifier si la a bien été viré de la table ou non (favorite_cve) condition if else et vérifier la longueur du tableau results
     conn = sqlite3.connect('assets/vulndote.db')
     cursor = conn.cursor()
-    cursor.execute(f"""DELETE FROM favorite_cve WHERE user_id = {chat_id} AND cve_id = '{cve}';""")
+    cursor.execute(f"""SELECT cve_id,user_id FROM favorite_cve WHERE user_id = {chat_id} AND cve_id = '{cve}';""")
+    results = cursor.fetchall()
     conn.commit()
-    conn.close()
-    return cve+" was removed from your fav list."
+    if len(results) == 0 :
+        return cve+" is not registered in your fav list.\nIf you want to fav it run the following command :/Cve@"+cveFormatedForRegex(cve)+"\n\n"
+    else : 
+        cursor.execute(f"""DELETE FROM favorite_cve WHERE user_id = {chat_id} AND cve_id = '{cve}';""")
+        conn.commit()
+        conn.close()
+        return cve+" was removed from your fav list."
+        
