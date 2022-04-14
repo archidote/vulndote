@@ -164,12 +164,13 @@ def which_reply(message):
                 bot.reply_to(message, cve, reply_markup=markup)
             
         elif message.reply_to_message.text == "Enter your a vendor/product name to be notifyed." : 
-            api_request = cveTodaySortedByVendor(message.text)
+            api_request = collectCVE_ID_TodaySortedByVendor(message.text,message.chat.id)
             if api_request == "Vendor/Product hasn't been found." :
                 bot.reply_to(message,"Vendor/Product hasn't been found. \n Try again : /subscribe")
             else : 
                 insertSubscriber(str(message.chat.id),"vendor",message.text,"")
                 bot.reply_to(message,"Subscribed to CVE alert for the following Vendor/Product :"+message.text+"")
+        
 
    
 @bot.callback_query_handler(
@@ -265,13 +266,14 @@ def callback_inline(call):
         bot.delete_message(call.message.chat.id, call.message.message_id)
         
     if call.data == "subscribe_vendor_alerts":
-        #print (call.message.json.message_id) # à revoir pour la facto
+        #print (call.message.json.message_id) # à revoir pour la facto et déplacer le checkage dans le backend pour bien séparer les responsbailités 
         check = checkIfUserIsAlreadyASubscriber("subscriber_vendor_alerts",str(call.message.chat.id))
         if check == True :
             markup = InlineKeyboardMarkup()
             b1 = InlineKeyboardButton(text='Unsubscribe', callback_data = 'unsubscribe_vendor_alerts')
-            markup.add(b1)
-            bot.reply_to(call.message,"You are already subscribed.",reply_markup=markup)
+            b2 = InlineKeyboardButton(text='Edit the vendor/product', callback_data = 'Edit_Vendor_Alerts')
+            markup.add(b1,b2)
+            bot.reply_to(call.message,"You are already subscribed. to",reply_markup=markup)
         else : 
             markup = telebot.types.ForceReply()
             bot.reply_to(call.message, "Enter your a vendor/product name to be notifyed.", reply_markup=markup)
@@ -334,6 +336,11 @@ def callback_inline(call):
             text=(listFavoriteCVESortedByPreviousMonth(call.message.chat.id)),
             reply_markup=call.message.reply_markup
             )
+        
+    if call.data == "Edit_Vendor_Alerts":
+        markup = telebot.types.ForceReply()
+        bot.reply_to(call.message, "Enter your a vendor/product name to be notifyed.", reply_markup=markup)
+
 
         
     if call.data == "unsubscribe_vendor_alerts_confirm":
