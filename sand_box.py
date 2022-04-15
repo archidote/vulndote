@@ -26,7 +26,7 @@ def sendAlertAutoVendor() :
                 newCVEs = "🔴 New CVE(s) for :"+vendor+"\n\n"
                 if data[i]["id"] not in row[2]:
                     CVEs += data[i]["id"]+","
-                    newCVEs += ""+cveSearch(data[i]["id"])+""
+                    newCVEs += ""+cveSearch(data[i]["id"],1)+""
                     newCVEs += "\n\n"
                     print ("new CVE : "+data[i]["id"])
                     print (newCVEs)

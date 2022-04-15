@@ -1,28 +1,33 @@
 from assets.controller import * 
 from assets.functions import * 
 
-def cveSearch(cveCode) : 
+def cveSearch(cveCode,statusCode) : 
     
     cveCode = cveReformated(cveCode)
+    
     if timeOutAPI() == True : 
         return "Api is not reachable at the moment"
     
     response = session.get('https://www.opencve.io/api/cve/'+cveCode+'')
     data = response.json() 
-
     
-    if "message" in data : 
-        return "CVE not found."
+    if statusCode == 0 : 
+        if "message" in data : 
+            return "CVE not found."
+        else :
+            cveInfo = ""
+            cveInfo += "<b>CVE ID</b> : "+data["id"]+"\n"
+            cveInfo += "<b>CVSS</b> "+cvssScale((data["id"]))+"\n"
+            cveInfo += "<b>Summary</b> : "+html.escape(data["summary"],quote=True)+"\n"
+            cveInfo += "<b>Published/Updated</b> : "+data["updated_at"]+"\n\n"
+            return cveInfo
+    else :    
+        if "message" in data : 
+            return "CVE not found."
+        else :
+            cveInfo = cveCommonInfo(data)
+            return cveInfo
         
-    else :
-        cveInfo = ""
-        cveInfo += "<b>CVE ID</b> : "+data["id"]+"\n"
-        cveInfo += "<b>CVSS</b> "+cvssScale((data["id"]))+"\n"
-        cveInfo += "<b>Summary</b> : "+html.escape(data["summary"],quote=True)+"\n"
-        cveInfo += "<b>Published/Updated</b> : "+data["updated_at"]+"\n\n"
-        cveIdFormated=cveFormatedForRegex(data["id"])
-        #cveInfo += "/Cve@"+cveIdFormated
-        return cveInfo
 
 def cvssScale(cve): 
     
@@ -117,15 +122,14 @@ def cveCommonInfo(data) :
     cveInfo = ""
     cveInfo += "<b>CVE ID</b> : "+data["id"]+"\n"
     cveInfo += "<b>CVSS</b> "+cvssScale((data["id"]))+"\n"
-    cveInfo += "<b>Summary</b> : "+html.escape(cutSummary(data["id"],data["summary"]),quote=True)+"\n"
+    cveInfo += "<b>Summary</b> : "+html.escape(cutSummary(data["summary"]),quote=True)+"\n"
     cveInfo += "<b>Published/Updated</b> : "+data["updated_at"]+"\n\n"
     cveIdFormated=data["id"].replace("-", "_")
     cveInfo += "ℹ️ : /Cve@"+cveIdFormated+"\n\n"
     return cveInfo
 
-def cutSummary(cveID,summary) :
+def cutSummary(summary) :
 
-    cveIdFormated=cveID.replace("-", "_")
     if len(summary) > 400 :
         return summary[:400]+"(...)"
     else :
