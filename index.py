@@ -53,7 +53,7 @@ def send_welcome(message):
         b5 = InlineKeyboardButton(text='🔍 PoC on Github ?', callback_data='Available_Exploits_Only_With_Github')
         b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
         markup.add(b1, b2, b3, b4, b5, b6)
-        bot.reply_to(message, cveSearch(reFormatedCVE), reply_markup=markup)
+        bot.reply_to(message, cveSearch(reFormatedCVE,0), reply_markup=markup)
         
 @bot.message_handler(commands=['today_cve_list'])
 def send_welcome(message):
@@ -147,8 +147,7 @@ def which_reply(message):
             b5 = InlineKeyboardButton(text='🔍 PoC on Github ?', callback_data='Available_Exploits_Only_With_Github')
             b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
             markup.add(b1, b2, b3, b4, b5, b6)
-            bot.reply_to(message, cveSearch(message.text),
-                         reply_markup=markup)
+            bot.reply_to(message, cveSearch(message.text,0),reply_markup=markup)
         elif message.reply_to_message.text == 'eEnter a Vendor :':
             markup = InlineKeyboardMarkup()
             b1 = InlineKeyboardButton(text='Critical',callback_data='Critical')
