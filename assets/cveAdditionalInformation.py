@@ -19,7 +19,8 @@ def cveSearch(cveCode,statusCode) :
             cveInfo += "<b>CVE ID</b> : "+data["id"]+"\n"
             cveInfo += "<b>CVSS</b> "+cvssScale((data["id"]))+"\n"
             cveInfo += "<b>Summary</b> : "+html.escape(data["summary"],quote=True)+"\n"
-            cveInfo += "<b>Published/Updated</b> : "+data["updated_at"]+"\n\n"
+            cveInfo += "<b>Updated</b> : "+formatDateAndTime(data["updated_at"])+"\n\n"
+            cveInfo += "<u>Published</u> : "+formatDateAndTime(data["created_at"])+"\n"
             return cveInfo
     else :    
         if "message" in data : 
@@ -28,7 +29,7 @@ def cveSearch(cveCode,statusCode) :
             cveInfo = cveCommonInfo(data)
             return cveInfo
         
-
+    
 def cvssScale(cve): 
     
     response = session.get('https://www.opencve.io/api/cve/'+cve+'')
@@ -123,7 +124,8 @@ def cveCommonInfo(data) :
     cveInfo += "<b>CVE ID</b> : "+data["id"]+"\n"
     cveInfo += "<b>CVSS</b> "+cvssScale((data["id"]))+"\n"
     cveInfo += "<b>Summary</b> : "+html.escape(cutSummary(data["summary"]),quote=True)+"\n"
-    cveInfo += "<b>Published/Updated</b> : "+data["updated_at"]+"\n\n"
+    cveInfo += "<b>Updated</b> : "+formatDateAndTime(data["updated_at"])+"\n"
+    cveInfo += "<u>Published</u> : "+formatDateAndTime(data["created_at"])+"\n\n"
     cveIdFormated=data["id"].replace("-", "_")
     cveInfo += "ℹ️ : /Cve@"+cveIdFormated+"\n\n"
     return cveInfo

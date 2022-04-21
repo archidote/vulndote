@@ -1,39 +1,38 @@
 
 import sqlite3
 import datetime as dt
-from unittest import result
 from assets.controller import *
+from assets.cveAdditionalInformation import cvssScale
 from assets.functions import cveFormatedForRegex 
 
 def favorite(cve_id,chat_id) :         
-            
-    conn = sqlite3.connect('assets/vulndote.db')
-    cursor = conn.cursor()
-    cursor.execute(f"""INSERT OR IGNORE INTO favorite_cve(cve_id,date_fav,user_id) VALUES ('{cve_id}','{today}',{chat_id})""")
-    conn.commit()
-    conn.close()
+    
+    cvss = cvssScale(cve_id)
+
+    cursor.execute(f"""INSERT OR IGNORE INTO favorite_cve(cve_id,date_fav,user_id,cvss) VALUES ('{cve_id}', '{today}', {chat_id}, '{cvss}');""")
+    dbConnexion.commit()
     return cve_id+" was added to your fav list. 📒\nTap /favorised to show your fav list."
 
 
 def listFavoriteCVE(chat_id) : 
     
-    conn = sqlite3.connect('assets/vulndote.db')
-    cursor = conn.cursor()
     cursor.execute(f"""SELECT * FROM favorite_cve WHERE user_id = {chat_id};""")
+    dbConnexion.commit()
     results = cursor.fetchall()
 
     favList = ""
     for cve in results:
-        favList += "📍"+cve[1]+"  -  🗓️ - "+cve[2]+"\n    ℹ️ : /Cve@"+cve[1].replace("-", "_")+"\n\n"
+        favList += "📍"+cve[1]+"  -  🗓️ - "+cve[2]+"\n"
+        favList += "    CVSS : "+cve[4]+"\n"
+        favList += "    ℹ️ : /Cve@"+cveFormatedForRegex(cve[1])+"\n\n"
     favList += "<b><i>Sorted CVE by </i></b>: "
     return favList
 
 
 def listFavoriteCVESortedByYear(chat_id) : 
     
-    conn = sqlite3.connect('assets/vulndote.db')
-    cursor = conn.cursor()
-    cursor.execute(f"""SELECT cve_id, date_fav FROM favorite_cve WHERE user_id = {chat_id};""")
+    cursor.execute(f"""SELECT cve_id, date_fav, cvss FROM favorite_cve WHERE user_id = {chat_id};""")
+    dbConnexion.commit()
     results = cursor.fetchall()
     year = datetime.today().strftime('%Y')
     rows = results
@@ -41,14 +40,13 @@ def listFavoriteCVESortedByYear(chat_id) :
     for row in rows:  
         if year in row[1]:
             output += ""+row[0]+" -  ⭐ on ("+row[1]+")\n"
+            output += "    CVSS : "+row[2]+"\n"
             output += "    ℹ️ : /Cve@"+cveFormatedForRegex(row[0])+"\n\n"
     return output
 
 def listFavoriteCVESortedByThisMonth (chat_id) : 
     
-    conn = sqlite3.connect('assets/vulndote.db')
-    cursor = conn.cursor()
-    cursor.execute(f"""SELECT cve_id, date_fav FROM favorite_cve WHERE user_id = {chat_id};""")
+    cursor.execute(f"""SELECT cve_id, date_fav, cvss FROM favorite_cve WHERE user_id = {chat_id};""")
     results = cursor.fetchall()
     month = datetime.today().strftime('%Y-%m')
     rows = results
@@ -56,14 +54,13 @@ def listFavoriteCVESortedByThisMonth (chat_id) :
     for row in rows:  
         if month in row[1]:
             output += ""+row[0]+" -  ⭐ on ("+row[1]+")\n"
+            output += "    CVSS : "+row[2]+"\n"
             output += "    ℹ️ : /Cve@"+cveFormatedForRegex(row[0])+"\n\n"
     return output
 
 def listFavoriteCVESortedByPreviousMonth (chat_id) : 
     
-    conn = sqlite3.connect('assets/vulndote.db')
-    cursor = conn.cursor()
-    cursor.execute(f"""SELECT cve_id, date_fav FROM favorite_cve WHERE user_id = {chat_id};""")
+    cursor.execute(f"""SELECT cve_id, date_fav, cvss FROM favorite_cve WHERE user_id = {chat_id};""")
     results = cursor.fetchall()
     previousMonth = (dt.date.today().replace(day=1) - dt.timedelta(days=1)).strftime("%m")
     year = datetime.today().strftime('%Y')
@@ -77,18 +74,16 @@ def listFavoriteCVESortedByPreviousMonth (chat_id) :
     for row in rows:  
         if yearParsedWithPreviousMonth in row[1]:
             output += ""+row[0]+" -  ⭐ on ("+row[1]+")\n"
+            output += "    CVSS : "+row[2]+"\n"
             output += "    ℹ️ : /Cve@"+cveFormatedForRegex(row[0])+"\n\n"
     return output
 
 def isThisCVEIsFavorised(chat_id,cve) : 
     
-    conn = sqlite3.connect('assets/vulndote.db')
-    cursor = conn.cursor()
     cursor.execute(f"""SELECT cve_id,user_id FROM favorite_cve WHERE user_id = {chat_id} AND cve_id = '{cve}';""")
     results = cursor.fetchall()
-    conn.commit()
-    conn.close()
-
+    dbConnexion.commit()
+    
     if len(results) == 0 : 
         return "CVE is not registered as a fav asset."
     else : 
@@ -98,16 +93,14 @@ def isThisCVEIsFavorised(chat_id,cve) :
         return fav
     
 def unfav(chat_id,cve) : # Faire une deuxième req select après pour vérifier si la a bien été viré de la table ou non (favorite_cve) condition if else et vérifier la longueur du tableau results
-    conn = sqlite3.connect('assets/vulndote.db')
-    cursor = conn.cursor()
+    
     cursor.execute(f"""SELECT cve_id,user_id FROM favorite_cve WHERE user_id = {chat_id} AND cve_id = '{cve}';""")
     results = cursor.fetchall()
-    conn.commit()
+    dbConnexion.commit()
     if len(results) == 0 :
         return cve+" is not registered in your fav list.\nIf you want to fav it run the following command :/Cve@"+cveFormatedForRegex(cve)+"\n\n"
     else : 
         cursor.execute(f"""DELETE FROM favorite_cve WHERE user_id = {chat_id} AND cve_id = '{cve}';""")
-        conn.commit()
-        conn.close()
+        dbConnexion.commit()
         return cve+" was removed from your fav list."
         

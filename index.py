@@ -163,8 +163,7 @@ def which_reply(message):
                 bot.reply_to(message, cve, reply_markup=markup)
             
         elif message.reply_to_message.text == "Enter your a vendor/product name to be notifyed." : 
-            api_request = collectCVE_ID_TodaySortedByVendor(message.text,message.chat.id)
-            if api_request == "Vendor/Product hasn't been found." :
+            if cveTodaySortedByVendor(message.text) == "Vendor/Product hasn't been found." :
                 bot.reply_to(message,"Vendor/Product hasn't been found. \n Try again : /subscribe")
             else : 
                 insertSubscriber(str(message.chat.id),"vendor",message.text,"")
