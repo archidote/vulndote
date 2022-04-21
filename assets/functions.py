@@ -39,6 +39,10 @@ def cveFormatedForRegex(cveNotFormated) :
     
     return cveReFormated
 
+def summaryRegex(summary) :
+    sum = summary.replace("&amp;", "and")
+    return sum 
+
 def timeOutAPI() : 
     try : 
         r = session.get("https://www.opencve.io/")
@@ -48,11 +52,11 @@ def timeOutAPI() :
 
 def hello(chat_id,first_name,started_bot_date): 
     
-    conn = sqlite3.connect('assets/vulndote.db')
-    cursor = conn.cursor()
+    
+    
     cursor.execute(f"""INSERT OR IGNORE INTO user(id,first_name,started_bot_date) VALUES ({chat_id},'{first_name}','{started_bot_date}')""")
-    conn.commit()
-    conn.close()
+    dbConnexion.commit()
+    
     
     return 0
            
@@ -69,9 +73,8 @@ def formatDateAndTime(date) :
 
 def test() : 
     
-    conn = sqlite3.connect('assets/vulndote.db')
-    cur = conn.cursor()
-    cur.execute(f"""SELECT * FROM subscriber_vendor_alerts """)
-    rows = cur.fetchall()
+    cursor.execute(f"""SELECT * FROM subscriber_vendor_alerts """)
+    dbConnexion.commit()
+    rows = cursor.fetchall()
     for row in rows:
         print (row)

@@ -1,4 +1,3 @@
-import html
 from datetime import *
 from assets.controller import * 
 from assets.functions import *
@@ -43,12 +42,10 @@ def collectCVE_ID_TodaySortedByVendor(vendor,chat_id) :
             if today in formatDate(data[i]["updated_at"]):
                 cve += ""+data[i]["id"]+","
         if cve : # IF cve variable is not empty 
-            conn = sqlite3.connect('assets/vulndote.db')
-            cur = conn.cursor()
-            cur.execute(f"""UPDATE subscriber_vendor_alerts SET api_request = '{cve}' WHERE chat_id = '{chat_id}';""") # à tester en raw 
-            cur.execute(f"""UPDATE subscriber_vendor_alerts SET refresh_date = '{today}' WHERE chat_id = '{chat_id}';""") # à tester en raw 
-            conn.commit()
-            conn.close()
+            cursor.execute(f"""UPDATE subscriber_vendor_alerts SET api_request = '{cve}' WHERE chat_id = '{chat_id}';""") # à tester en raw 
+            cursor.execute(f"""UPDATE subscriber_vendor_alerts SET refresh_date = '{today}' WHERE chat_id = '{chat_id}';""") # à tester en raw 
+            dbConnexion.commit()
+            
             return cve  
         else : 
             return "No CVE(s) have been registered today for this vendor/product."
