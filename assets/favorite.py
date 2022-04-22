@@ -98,7 +98,7 @@ def unfav(chat_id,cve) : # Faire une deuxième req select après pour vérifier
     results = cursor.fetchall()
     dbConnexion.commit()
     if len(results) == 0 :
-        return cve+" is not registered in your fav list.\nIf you want to fav it run the following command :/Cve@"+cveFormatedForRegex(cve)+"\n\n"
+        return cve+" is not registered in your fav list.\n Fav it ? ➡️ :/Cve@"+cveFormatedForRegex(cve)+"\n\n"
     else : 
         cursor.execute(f"""DELETE FROM favorite_cve WHERE user_id = {chat_id} AND cve_id = '{cve}';""")
         dbConnexion.commit()

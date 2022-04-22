@@ -13,7 +13,7 @@ def cveSearch(cveCode,statusCode) :
     
     if statusCode == 0 : 
         if "message" in data : 
-            return "CVE not found."
+            return CVE_NOT_FOUND
         else :
             cveInfo = ""
             cveInfo += "<b>CVE ID</b> : "+data["id"]+"\n"
@@ -24,7 +24,7 @@ def cveSearch(cveCode,statusCode) :
             return cveInfo
     else :    
         if "message" in data : 
-            return "CVE not found."
+            return CVE_NOT_FOUND
         else :
             cveInfo = cveCommonInfo(data)
             return cveInfo
@@ -61,7 +61,7 @@ def cveReferences(cve) :
 
     
     if "message" in data : 
-        return "CVE not found."
+        return CVE_NOT_FOUND
         
     else :
         cve = "" 
@@ -79,7 +79,7 @@ def vulnerableProductsOrVendors(cve) :
 
     
     if "message" in data : 
-        return "CVE not found."
+        return CVE_NOT_FOUND
         
     else :
         cve = "" 
@@ -99,7 +99,7 @@ def moreInfo(cve) :
 
     
     if "message" in data : 
-        return "CVE not found."
+        return CVE_NOT_FOUND
         
     else :
         impact = "<b>CVE</b> : "+data["id"]+"\n"

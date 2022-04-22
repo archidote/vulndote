@@ -24,14 +24,14 @@ HELP MENU //
 """
 
 @bot.message_handler(commands=['start'])
-def send_welcome(message):
+def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     today = date.today()
     hello(message.chat.id,message.from_user.first_name,today)
     bot.reply_to(message, "Hello", reply_markup=markup)
  
 @bot.message_handler(commands=['cve'])
-def send_welcome(message):
+def CVE(message):
     if timeOutAPI() == True : 
         bot.reply_to(message, "Api is not reachable at the moment")
     else : 
@@ -40,7 +40,7 @@ def send_welcome(message):
         bot.reply_to(message, "Enter a CVE code :", reply_markup=markup)
         
 @bot.message_handler(regexp="^/Cve@*")
-def send_welcome(message):
+def CVEOnTheFly(message):
     if timeOutAPI() == True : 
         bot.reply_to(message, "Api is not reachable at the moment")
     else : 
@@ -56,7 +56,7 @@ def send_welcome(message):
         bot.reply_to(message, cveSearch(reFormatedCVE,0), reply_markup=markup)
         
 @bot.message_handler(commands=['today_cve_list'])
-def send_welcome(message):
+def todayCVEList(message):
     if timeOutAPI() == True : 
         bot.reply_to(message, "Api is not reachable at the moment")
     else : 
@@ -66,11 +66,10 @@ def send_welcome(message):
         b3 = InlineKeyboardButton(text='/medium')
         b4 = InlineKeyboardButton(text='/low')
         markup.add(b1, b2, b3, b4)
-        bot.reply_to(message, "Choose :",reply_markup=markup)
+        bot.reply_to(message, "Choose a level of criticity :",reply_markup=markup)
         
- 
 @bot.message_handler(commands=['critical','high','medium','low'])
-def send_welcome(message):
+def levelOfCriticity(message):
     if timeOutAPI() == True : 
         bot.reply_to(message, "Api is not reachable at the moment")
     else :     
@@ -81,29 +80,28 @@ def send_welcome(message):
         cve = cveTodaySortedByCVSS(asset)
         if len(cve) > 4096 :
             for x in range(0, len(cve), 4096): # Allow vulndote to send big GLOBAL message (split in x messages)
-                bot.reply_to(message, text=cve[x:x+4096],reply_markup=markup) # Message edit don't work for a big message, because the last message ate the previous's
+                bot.reply_to(message, text=cve[x:x+4096],reply_markup=markup) # Message edit don't work for a big message, because the last message "ate" the previous's
         else : 
             bot.edit_message_text(cve, loading.chat.id, loading.message_id)
 
 @bot.message_handler(commands=['today_cve_sorted_by_asset'])
-def send_welcome(message):
+def CVESortedByVendorOrProduct(message):
     if timeOutAPI() == True : 
         bot.reply_to(message, "Api is not reachable at the moment")
     else : 
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup = telebot.types.ForceReply()
-        bot.reply_to(message, "eEnter a Vendor :", reply_markup=markup)
-        
-       
+        bot.reply_to(message, "Enter a vendor or a product name :", reply_markup=markup)
+         
 @bot.message_handler(commands=['subscribe'])
-def send_welcome(message):
+def subscribe(message):
 	markup = InlineKeyboardMarkup()	
 	b1 = InlineKeyboardButton(text='Vendor', callback_data = 'subscribe_vendor_alerts')
 	markup.add(b1)
 	bot.reply_to(message, "Subscribe Menu :", reply_markup=markup)
 
 @bot.message_handler(commands=['favorised'])
-def send_welcome(message):
+def favorised(message):
     markup = InlineKeyboardMarkup()
     b1 = InlineKeyboardButton(text='This year',callback_data='Fav_Sorted_By_This_Year')
     b2 = InlineKeyboardButton(text='This Month',callback_data='Fav_Sorted_By_This_Month')
@@ -112,14 +110,13 @@ def send_welcome(message):
     CVEs = listFavoriteCVE(message.chat.id)
     loading = bot.send_message(message.from_user.id,"Loading...⌛")
     if len(CVEs) > 4096 :
-        for x in range(0, len(CVEs), 4096): # Allow vulndote to send big GLOBAL message (split in x messages)
-            bot.reply_to(message, text=CVEs[x:x+4096],reply_markup=markup) # Message edit don't work for a big message, because the last message ate the previous's
+        for x in range(0, len(CVEs), 4096): 
+            bot.reply_to(message, text=CVEs[x:x+4096],reply_markup=markup) 
     else : 
         bot.edit_message_text(CVEs, loading.chat.id, loading.message_id,reply_markup=markup)
 
-    
 @bot.message_handler(regexp="^/unfav@*")
-def send_welcome(message):
+def unFavOntheFly(message):
     if timeOutAPI() == True : 
         bot.reply_to(message, "Api is not reachable at the moment")
     else : 
@@ -128,11 +125,13 @@ def send_welcome(message):
         
  
 @bot.message_handler(commands=['terminology'])
-def send_welcome(message):
+def termInfo(message):
 	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-	bot.reply_to(message,terminology(), reply_markup=markup,disable_web_page_preview=True)
+	bot.reply_to(message,terminology(), reply_markup=markup, disable_web_page_preview=True)
  
-###########################################################################################################
+###################################################################################################################
+#                                             FETCH ANSWERS OF AN /action                                         #
+###################################################################################################################   
 @bot.message_handler(func=lambda m: True)
 def which_reply(message):
     if message.reply_to_message == None:
@@ -148,32 +147,38 @@ def which_reply(message):
             b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
             markup.add(b1, b2, b3, b4, b5, b6)
             bot.reply_to(message, cveSearch(message.text,0),reply_markup=markup)
-        elif message.reply_to_message.text == 'eEnter a Vendor :':
+        elif message.reply_to_message.text == 'Enter a vendor or a product name :':
             markup = InlineKeyboardMarkup()
             b1 = InlineKeyboardButton(text='Critical',callback_data='Critical')
             b2 = InlineKeyboardButton(text='High', callback_data='High')
             b3 = InlineKeyboardButton(text='Medium',callback_data='Medium')
             b4 = InlineKeyboardButton(text='Low', callback_data='Low')
             markup.add(b1, b2, b3, b4)
+            bot.send_message(message.from_user.id,"⏳")
             cve = cveTodaySortedByVendor(message.text)
-            if len(cve) > 4096 :
-                for x in range(0, len(cve), 4096): # Allow vulndote to send big GLOBAL message (split in x messages)
-                    bot.reply_to(message, text=cve[x:x+4096],reply_markup=markup)
-            else : 
-                bot.reply_to(message, cve, reply_markup=markup)
-            
+            if cve == "No CVE(s) have been registered today for this vendor/product." :
+                bot.reply_to(message, cve)
+            elif cve == VENDOR_OR_PRODUCT_NOT_FOUND :
+                bot.reply_to(message, cve)
+            else :  
+                if len(cve) > 4096 :
+                    for x in range(0, len(cve), 4096): # Allow vulndote to send big GLOBAL message (split in x messages)
+                        bot.reply_to(message, text=cve[x:x+4096],reply_markup=markup)
+                else : 
+                    bot.reply_to(message, cve, reply_markup=markup)
+                    
         elif message.reply_to_message.text == "Enter your a vendor/product name to be notifyed." : 
-            if cveTodaySortedByVendor(message.text) == "Vendor/Product hasn't been found." :
+            if cveTodaySortedByVendor(message.text) == VENDOR_OR_PRODUCT_NOT_FOUND :
                 bot.reply_to(message,"Vendor/Product hasn't been found. \n Try again : /subscribe")
             else : 
                 insertSubscriber(str(message.chat.id),"vendor",message.text,"")
                 bot.reply_to(message,"Subscribed to CVE alert for the following Vendor/Product :"+message.text+"")
-        
-
+ 
+###################################################################################################################
+#                                             BUTTON CALLBACK                                                     #
+###################################################################################################################               
    
-@bot.callback_query_handler(
-    func=lambda call: call.data != "check_group"
-)  # Buttons fetch reply value
+@bot.callback_query_handler(func=lambda call: call.data != "check_group")  # Buttons fetch reply value
 def callback_inline(call):
 
     if call.data == "Critical":
@@ -291,7 +296,7 @@ def callback_inline(call):
         favorisedORNot = isThisCVEIsFavorised(call.message.chat.id,cveReformatedVar)
         
         if favorisedORNot == "You have already favorised this cve." :
-            bot.reply_to(call.message,"You have already favorised this cve "+cveReformatedVar+" if you want unfav it, click on here : /unfav@"+cveFormatedForRegex(cveReformatedVar)+"")
+            bot.reply_to(call.message,"You have already favorised "+cveReformatedVar+". \n Unfav it ? ➡️ /unfav@"+cveFormatedForRegex(cveReformatedVar)+"")
         else : 
             bot.edit_message_text(
             message_id=call.message.id,
@@ -339,7 +344,9 @@ def callback_inline(call):
         markup = telebot.types.ForceReply()
         bot.reply_to(call.message, "Enter your a vendor/product name to be notifyed.", reply_markup=markup)
 
-
+###################################################################################################################
+#                                             BUTTON CALLBACK (confirm your action)                                #
+###################################################################################################################   
         
     if call.data == "unsubscribe_vendor_alerts_confirm":
         bot.answer_callback_query(call.id, "You unsubscribed to allergie alerts")

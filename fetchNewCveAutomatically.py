@@ -1,6 +1,4 @@
-from psycopg2 import connect
-import schedule
-import sqlite3
+import schedule 
 import time as t
 from assets.cveToday import * 
 from assets.functions import * 
@@ -35,8 +33,7 @@ def sendAlertAutoVendor() :
                 cursor.execute(f"""UPDATE subscriber_vendor_alerts SET api_request = '{CVEs}', refresh_date = '{today}' WHERE chat_id = {chat_id};""")
 
     dbConnexion.commit() 
-    
-    
+
 sendAlertAutoVendor()
 
 # schedule.every(2).minutes.do(lambda: sendAlertAutoVendor())
