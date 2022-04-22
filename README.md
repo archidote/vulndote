@@ -58,6 +58,7 @@ user@ubuntuu:~$ source .zshrc
 
 ```
 user@ubuntuu:~$ cd ~/vulndote
+user@ubuntuu:~$ cd ~/vulndote python3 -m venv venv-vulndote
 user@ubuntuu:~/vulndote$ source venv-vulndote/bin/activate
 (venv-vulndote) user@ubuntuu:~/vulndote$
 ```

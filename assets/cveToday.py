@@ -5,11 +5,11 @@ from assets.cveAdditionalInformation import *
 
 def cveTodaySortedByVendor(vendor) :  
     
-    response = session.get('https://www.opencve.io/api/cve?vendor='+vendor)
+    response = session.get(OPEN_CVE_API_URL_PARAMS+"vendor="+vendor)
     data = response.json() 
 
     if "message" in data : 
-        return "Vendor/Product hasn't been found."
+        return VENDOR_OR_PRODUCT_NOT_FOUND
     else : 
 
         today = now = datetime.now()
@@ -27,11 +27,11 @@ def cveTodaySortedByVendor(vendor) :
 
 def collectCVE_ID_TodaySortedByVendor(vendor,chat_id) :  
     
-    response = session.get('https://www.opencve.io/api/cve?vendor='+vendor)
+    response = session.get(OPEN_CVE_API_URL_PARAMS+"vendor=vendor="+vendor)
     data = response.json() 
 
     if "message" in data : 
-        return "Vendor/Product hasn't been found."
+        return VENDOR_OR_PRODUCT_NOT_FOUND
     else : 
 
         today = now = datetime.now()
@@ -52,7 +52,7 @@ def collectCVE_ID_TodaySortedByVendor(vendor,chat_id) :
 
 def cveTodaySortedByCVSS(cvss) :  
     
-    response = session.get('https://www.opencve.io/api/cve?cvss='+cvss)
+    response = session.get(OPEN_CVE_API_URL_PARAMS+'cvss='+cvss)
     data = response.json() 
 
     today = now = datetime.now()
@@ -69,7 +69,7 @@ def cveTodaySortedByCVSS(cvss) :
 
 def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok 
     
-    response = session.get('https://www.opencve.io/api/cve?vendor='+vendor+'&cvss='+cvss+'')
+    response = session.get(OPEN_CVE_API_URL_PARAMS+'vendor='+vendor+'&cvss='+cvss+'')
     data = response.json() 
     
     if "message" in data : 
@@ -88,21 +88,6 @@ def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok
         else : 
             return "No CVE(s) have been registered Today for <b>"+vendor+"</b> with this level of threat : <b>"+cvss+"</b>"
 
-def cveTodayNotSorted() :  
-    
-    response = session.get('https://www.opencve.io/api/cve')
-    data = response.json() 
-
-    today = now = datetime.now()
-    today = now.strftime("%Y-%m-%d")
-    
-    cve = ""
-    for i in range(len(data)):
-        if today == formatDate(data[i]["updated_at"]):
-            cve += cveCommonInfo(data[i])
-    return cve  
-
 # print (cveTodaySortedByVendor("microsoft"))
 # print (cveTodaySortedByCVSS("critical"))
-# print (cveTodayNotSorted())
 # print (cveTodaySortedByVendorAndCVSS("Microsoft","Low"))
