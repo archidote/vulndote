@@ -107,7 +107,7 @@ def favorised(message):
     b2 = InlineKeyboardButton(text='This Month',callback_data='Fav_Sorted_By_This_Month')
     b3 = InlineKeyboardButton(text='Last Month',callback_data='Fav_Sorted_By_Last_Month')
     markup.add(b1,b2,b3)
-    CVEs = listFavoriteCVE(message.chat.id)
+    CVEs = listFavoriteCVE(message.chat.id,"notSorted")
     loading = bot.send_message(message.from_user.id,"Loading...⌛")
     if len(CVEs) > 4096 :
         for x in range(0, len(CVEs), 4096): 
@@ -304,11 +304,6 @@ def callback_inline(call):
             text=(favorite(cveReformatedVar,call.message.chat.id)),
             reply_markup=call.message.reply_markup
             )
-
-    # if call.data == "Fav_Sorted_By_Vendor":
-    #     bot.answer_callback_query(call.id, "Loading...")
-    #     cveReformatedVar = cveReformated(call.message.reply_to_message.text)
-    #     favorisedORNot = isThisCVEIsFavorised(call.message.chat.id,cveReformatedVar)
     
     if call.data == "Fav_Sorted_By_This_Year":
         
@@ -316,7 +311,7 @@ def callback_inline(call):
         bot.edit_message_text(
             message_id=call.message.id,
             chat_id=call.message.chat.id,
-            text=(listFavoriteCVESortedByYear(call.message.chat.id)),
+            text=(listFavoriteCVE(call.message.chat.id,"year")),
             reply_markup=call.message.reply_markup
             )
         
@@ -326,7 +321,7 @@ def callback_inline(call):
         bot.edit_message_text(
             message_id=call.message.id,
             chat_id=call.message.chat.id,
-            text=(listFavoriteCVESortedByThisMonth(call.message.chat.id)),
+            text=(listFavoriteCVE(call.message.chat.id,"month")),
             reply_markup=call.message.reply_markup
             )
         
@@ -336,7 +331,7 @@ def callback_inline(call):
         bot.edit_message_text(
             message_id=call.message.id,
             chat_id=call.message.chat.id,
-            text=(listFavoriteCVESortedByPreviousMonth(call.message.chat.id)),
+            text=(listFavoriteCVE(call.message.chat.id,"lastMonth")),
             reply_markup=call.message.reply_markup
             )
         
