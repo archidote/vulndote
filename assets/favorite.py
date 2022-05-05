@@ -29,13 +29,13 @@ def listFavoriteCVE(chat_id,t) :
     dbConnexion.commit()
     rows = cursor.fetchall()
     
-    if t == "year" : 
+    if t == "Fav_Sorted_By_This_Year" : 
         Datetime = datetime.today().strftime('%Y')
         return checkRowForFavorite(rows,Datetime)
-    elif t == "month" :
+    elif t == "Fav_Sorted_By_This_Month" :
         Datetime = datetime.today().strftime('%Y-%m')
         return checkRowForFavorite(rows,Datetime)
-    elif t == "lastMonth" :
+    elif t == "Fav_Sorted_By_Last_Month" :
         previousMonth = (dt.date.today().replace(day=1) - dt.timedelta(days=1)).strftime("%m")
         year = datetime.today().strftime('%Y')
         yearParsedWithPreviousMonth = year+"-"+previousMonth

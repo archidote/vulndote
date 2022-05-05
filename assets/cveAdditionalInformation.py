@@ -1,5 +1,6 @@
 from assets.controller import * 
 from assets.functions import * 
+import html 
 
 def cveSearch(cveCode,statusCode) : 
     
@@ -76,12 +77,13 @@ def vulnerableProductsOrVendors(cve) :
     
     response = session.get('https://www.opencve.io/api/cve/'+cve+'')
     data = response.json() 
-
     
     if "message" in data : 
         return CVE_NOT_FOUND
         
     else :
+        if  len(data["vendors"]) == 0 : 
+            return "No products is impacted by "+cve
         cve = "" 
         cve += "<strong>CVE ID</strong>: "+data["id"]+"\n\n"
         for key in data["vendors"] :
