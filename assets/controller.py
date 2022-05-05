@@ -1,3 +1,7 @@
+
+import telebot
+from telebot import *
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from datetime import datetime
 import requests
 import os
@@ -12,7 +16,6 @@ OPEN_CVE_API_URL_PARAMS = "https://www.opencve.io/api/cve?"
 CVE_NOT_FOUND = "CVE was not found."
 VENDOR_OR_PRODUCT_NOT_FOUND = "Vendor or product was not found."
 
-
 session = requests.Session()
 session.auth = (OPEN_CVE_API_USERNAME, OPEN_CVE_API_PASSWORD)
 auth = session.post('https://www.opencve.io/api/')
@@ -22,4 +25,5 @@ cursor = dbConnexion.cursor()
 
 today = now = datetime.now()
 today = now.strftime("%Y-%m-%d")
+
 

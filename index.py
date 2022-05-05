@@ -1,4 +1,4 @@
-import telebot
+import schedule, threading, time, telebot
 from telebot import *
 from assets.subscriber import checkIfUserIsAlreadyASubscriber, deleteSubscriber, insertSubscriber
 from assets.cveToday import * 
@@ -7,7 +7,7 @@ from assets.functions import *
 from assets.cvePoCExploits import * 
 from assets.cveAdditionalInformation import * 
 from assets.favorite import * 
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import *
 
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN,parse_mode="HTML")
 
@@ -29,15 +29,22 @@ def start(message):
     today = date.today()
     hello(message.chat.id,message.from_user.first_name,today)
     bot.reply_to(message, "Hello", reply_markup=markup)
- 
-@bot.message_handler(commands=['cve'])
-def CVE(message):
+        
+@bot.message_handler(regexp="^CVE-*")
+def CVEOnTheFly(message):
     if timeOutAPI() == True : 
         bot.reply_to(message, "Api is not reachable at the moment")
     else : 
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        markup = telebot.types.ForceReply()
-        bot.reply_to(message, "Enter a CVE code :", reply_markup=markup)
+        reFormatedCVE = cveReformated(message.text)
+        markup = InlineKeyboardMarkup()
+        b1 = InlineKeyboardButton(text='💻/📦 Affected',callback_data='Products_Affected')
+        b2 = InlineKeyboardButton(text='📖 Ref', callback_data='References')
+        b3 = InlineKeyboardButton(text='ℹ️', callback_data='More_Info')
+        b4 = InlineKeyboardButton(text='🔍 PoC on sploitus ?', callback_data='Available_Exploits_With_Sploitus')
+        b5 = InlineKeyboardButton(text='🔍 PoC on Github ?', callback_data='Available_Exploits_Only_With_Github')
+        b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
+        markup.add(b1, b2, b3, b4, b5, b6)
+        bot.reply_to(message, cveSearch(reFormatedCVE,0), reply_markup=markup)
         
 @bot.message_handler(regexp="^/Cve@*")
 def CVEOnTheFly(message):
@@ -76,7 +83,7 @@ def levelOfCriticity(message):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         asset = message.text 
         asset = asset.replace('/','')
-        loading = bot.send_message(message.from_user.id,"Loading...⌛")
+        loading = bot.send_message(message.from_user.id,"⏳")
         cve = cveTodaySortedByCVSS(asset)
         if len(cve) > 4096 :
             for x in range(0, len(cve), 4096): # Allow vulndote to send big GLOBAL message (split in x messages)
@@ -108,7 +115,7 @@ def favorised(message):
     b3 = InlineKeyboardButton(text='Last Month',callback_data='Fav_Sorted_By_Last_Month')
     markup.add(b1,b2,b3)
     CVEs = listFavoriteCVE(message.chat.id,"notSorted")
-    loading = bot.send_message(message.from_user.id,"Loading...⌛")
+    loading = bot.send_message(message.from_user.id,"⏳")
     if len(CVEs) > 4096 :
         for x in range(0, len(CVEs), 4096): 
             bot.reply_to(message, text=CVEs[x:x+4096],reply_markup=markup) 
@@ -129,6 +136,41 @@ def termInfo(message):
 	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 	bot.reply_to(message,terminology(), reply_markup=markup, disable_web_page_preview=True)
  
+def checkEveryHourNewCveForSubsribedUsers():
+    print ("Execution of sendAlertAutoVendor()")
+    cursor.execute(f"""SELECT * FROM subscriber_vendor_alerts """)
+    rows = cursor.fetchall()
+            
+    for row in rows:
+        
+        chat_id = row[0]
+        vendor = row[1]
+        
+        response = session.get('https://www.opencve.io/api/cve?vendor='+row[1])
+        data = response.json() 
+        
+        CVEs = ""
+        
+        for i in range(len(data)):
+            if today in formatDate(data[i]["updated_at"]):
+                newCVEs = "📍 New CVE for :"+vendor+"\n\n"
+                if data[i]["id"] not in row[2]:
+                    print ("New CVE"+data[i]["id"]+"has been fetched for"+vendor+" - user id :"+str(chat_id))
+                    CVEs += data[i]["id"]+","
+                    newCVEs += cveSearch(data[i]["id"],1)
+                    newCVEs = summaryRegex(newCVEs) # Escape other chars than common HTML special chars like &amp;
+                    bot.send_message(chat_id,newCVEs,disable_web_page_preview=True)
+                    # send_text = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage?chat_id=' + str(chat_id)+ '&parse_mode=HTML&text=' + newCVEs + ''
+                    # response = requests.get(send_text)
+                else : 
+                    print ("CVE"+data[i]["id"]+"has been ALREADY fetched for"+vendor+" - user id :"+str(chat_id))
+                    CVEs += data[i]["id"]+","
+                cursor.execute(f"""UPDATE subscriber_vendor_alerts SET api_request = '{CVEs}', refresh_date = '{today}' WHERE chat_id = {chat_id};""")
+            else : 
+                print ("No new CVE for :"+vendor+" today - user id :"+str(chat_id))
+                
+    dbConnexion.commit() 
+
 ###################################################################################################################
 #                                             FETCH ANSWERS OF AN /action                                         #
 ###################################################################################################################   
@@ -137,17 +179,7 @@ def which_reply(message):
     if message.reply_to_message == None:
         bot.reply_to(message, help)
     else:
-        if message.reply_to_message.text == 'Enter a CVE code :':
-            markup = InlineKeyboardMarkup()
-            b1 = InlineKeyboardButton(text='Products Affected',callback_data='Products_Affected')
-            b2 = InlineKeyboardButton(text='References',callback_data='References')
-            b3 = InlineKeyboardButton(text='ℹ️',callback_data='More_Info')
-            b4 = InlineKeyboardButton(text='🔍 PoC on sploitus ?', callback_data='Available_Exploits_With_Sploitus')
-            b5 = InlineKeyboardButton(text='🔍 PoC on Github ?', callback_data='Available_Exploits_Only_With_Github')
-            b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
-            markup.add(b1, b2, b3, b4, b5, b6)
-            bot.reply_to(message, cveSearch(message.text,0),reply_markup=markup)
-        elif message.reply_to_message.text == 'Enter a vendor or a product name :':
+        if message.reply_to_message.text == 'Enter a vendor or a product name :':
             markup = InlineKeyboardMarkup()
             b1 = InlineKeyboardButton(text='Critical',callback_data='Critical')
             b2 = InlineKeyboardButton(text='High', callback_data='High')
@@ -163,16 +195,19 @@ def which_reply(message):
             else :  
                 if len(cve) > 4096 :
                     for x in range(0, len(cve), 4096): # Allow vulndote to send big GLOBAL message (split in x messages)
-                        bot.reply_to(message, text=cve[x:x+4096],reply_markup=markup)
+                        bot.reply_to(message, text=cve[x:x+4096], reply_markup=markup)
                 else : 
                     bot.reply_to(message, cve, reply_markup=markup)
                     
         elif message.reply_to_message.text == "Enter your a vendor/product name to be notifyed." : 
             if cveTodaySortedByVendor(message.text) == VENDOR_OR_PRODUCT_NOT_FOUND :
-                bot.reply_to(message,"Vendor/Product hasn't been found. \n Try again : /subscribe")
+                markup = InlineKeyboardMarkup()
+                b1 = InlineKeyboardButton(text='Edit the vendor/product',callback_data='Edit_Vendor_Alerts')
+                markup.add(b1)
+                bot.reply_to(message,"❌ Vendor/Product hasn't been found. \n Try again : ", reply_markup=markup)
             else : 
                 insertSubscriber(str(message.chat.id),"vendor",message.text,"")
-                bot.reply_to(message,"Subscribed to CVE alert for the following Vendor/Product :"+message.text+"")
+                bot.reply_to(message,"Subscribed ✅ : "+message.text+"")
  
 ###################################################################################################################
 #                                             BUTTON CALLBACK                                                     #
@@ -181,46 +216,17 @@ def which_reply(message):
 @bot.callback_query_handler(func=lambda call: call.data != "check_group")  # Buttons fetch reply value
 def callback_inline(call):
 
-    if call.data == "Critical":
+    if call.data == "Critical" or call.data == "High" or call.data == "Medium" or call.data == "Low" :
         bot.answer_callback_query(call.id, "Loading... ")
         bot.edit_message_text(
             message_id=call.message.id,
             chat_id=call.message.chat.id,
             text=cveTodaySortedByVendorAndCVSS(
-                call.message.reply_to_message.text, "critical"
+                call.message.reply_to_message.text, call.data
             ),
             reply_markup=call.message.reply_markup,
         )
-    if call.data == "High":
-        bot.answer_callback_query(call.id, "Loading...")
-        bot.edit_message_text(
-            message_id=call.message.id,
-            chat_id=call.message.chat.id,
-            text=cveTodaySortedByVendorAndCVSS(
-                call.message.reply_to_message.text, "high"
-            ),
-            reply_markup=call.message.reply_markup,
-        )
-    if call.data == "Medium":
-        bot.answer_callback_query(call.id, "Loading...")
-        bot.edit_message_text(
-            message_id=call.message.id,
-            chat_id=call.message.chat.id,
-            text=cveTodaySortedByVendorAndCVSS(
-                call.message.reply_to_message.text, "medium"
-            ),
-            reply_markup=call.message.reply_markup,
-        )
-    if call.data == "Low":
-        bot.answer_callback_query(call.id, "Loading...")
-        bot.edit_message_text(
-            message_id=call.message.id,
-            chat_id=call.message.chat.id,
-            text=cveTodaySortedByVendorAndCVSS(
-                call.message.reply_to_message.text, "low"
-            ),
-            reply_markup=call.message.reply_markup,
-        )
+
     if call.data == "Products_Affected":
         bot.answer_callback_query(call.id, "Loading...")
         bot.edit_message_text(
@@ -296,7 +302,7 @@ def callback_inline(call):
         favorisedORNot = isThisCVEIsFavorised(call.message.chat.id,cveReformatedVar)
         
         if favorisedORNot == "You have already favorised this cve." :
-            bot.reply_to(call.message,"You have already favorised "+cveReformatedVar+". \n Unfav it ? ➡️ /unfav@"+cveFormatedForRegex(cveReformatedVar)+"")
+            bot.reply_to(call.message,"You have already favorised "+cveReformatedVar+". \n➡️ Unfav it ?  /unfav@"+cveFormatedForRegex(cveReformatedVar)+"")
         else : 
             bot.edit_message_text(
             message_id=call.message.id,
@@ -305,47 +311,42 @@ def callback_inline(call):
             reply_markup=call.message.reply_markup
             )
     
-    if call.data == "Fav_Sorted_By_This_Year":
-        
+    if call.data == "Fav_Sorted_By_This_Year" or call.data == "Fav_Sorted_By_This_Month" or call.data == "Fav_Sorted_By_Last_Month" :
         bot.answer_callback_query(call.id, "Loading...")
         bot.edit_message_text(
             message_id=call.message.id,
             chat_id=call.message.chat.id,
-            text=(listFavoriteCVE(call.message.chat.id,"year")),
+            text=(listFavoriteCVE(call.message.chat.id,call.data)),
             reply_markup=call.message.reply_markup
             )
-        
-    if call.data == "Fav_Sorted_By_This_Month":
-        
-        bot.answer_callback_query(call.id, "Loading...")
-        bot.edit_message_text(
-            message_id=call.message.id,
-            chat_id=call.message.chat.id,
-            text=(listFavoriteCVE(call.message.chat.id,"month")),
-            reply_markup=call.message.reply_markup
-            )
-        
-    if call.data == "Fav_Sorted_By_Last_Month":
-        
-        bot.answer_callback_query(call.id, "Loading...")
-        bot.edit_message_text(
-            message_id=call.message.id,
-            chat_id=call.message.chat.id,
-            text=(listFavoriteCVE(call.message.chat.id,"lastMonth")),
-            reply_markup=call.message.reply_markup
-            )
-        
+           
     if call.data == "Edit_Vendor_Alerts":
         markup = telebot.types.ForceReply()
         bot.reply_to(call.message, "Enter your a vendor/product name to be notifyed.", reply_markup=markup)
 
 ###################################################################################################################
-#                                             BUTTON CALLBACK (confirm your action)                                #
+#                                             BUTTON CALLBACK (confirm your action)                               #
 ###################################################################################################################   
         
     if call.data == "unsubscribe_vendor_alerts_confirm":
         bot.answer_callback_query(call.id, "You unsubscribed to allergie alerts")
         bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=deleteSubscriber("vendor",call.message.chat.id))
-        
-        
-bot.infinity_polling()  # Bot Exec
+
+###################################################################################################################
+#           SCHEDULE THE AUTO FETCHING API TO GET THE LATEST CVE FROM THE SUBSCRIBER'S VENDOR PREFERENCE          #
+###################################################################################################################  
+schedule.every(20).minutes.do(lambda: checkEveryHourNewCveForSubsribedUsers())
+
+def scheduleApiFetching(): # à renomer pour que ça soit plus clair !
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+t1 = threading.Thread(target = scheduleApiFetching)
+t1.start()
+
+###################################################################################################################
+#                                                   BOT EXEC                                                      #
+################################################################################################################### 
+
+bot.infinity_polling()

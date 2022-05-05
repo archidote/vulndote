@@ -1,8 +1,6 @@
 from datetime import timezone
 from assets.controller import * 
 import urllib3
-import sqlite3
-import html 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
                
 def terminology() : 
@@ -52,14 +50,9 @@ def timeOutAPI() :
 
 def hello(chat_id,first_name,started_bot_date): 
     
-    
-    
     cursor.execute(f"""INSERT OR IGNORE INTO user(id,first_name,started_bot_date) VALUES ({chat_id},'{first_name}','{started_bot_date}')""")
     dbConnexion.commit()
-    
-    
     return 0
-           
 
 def formatDate(rawDate) : # Facto possible avec les deux fonctions ci-desssous
     
@@ -67,14 +60,6 @@ def formatDate(rawDate) : # Facto possible avec les deux fonctions ci-desssous
     return res
 
 def formatDateAndTime(date) : 
+    
     d = datetime.fromisoformat(date[:-1]).astimezone(timezone.utc)
     return d.strftime('%Y-%m-%d at %H:%M:%S')
-
-
-def test() : 
-    
-    cursor.execute(f"""SELECT * FROM subscriber_vendor_alerts """)
-    dbConnexion.commit()
-    rows = cursor.fetchall()
-    for row in rows:
-        print (row)
