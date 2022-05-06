@@ -14,9 +14,8 @@ bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN,parse_mode="HTML")
 help = """
 HELP MENU //
 
-/cve
 /today_cve_list 
-/today_cve_sorted_by_asset
+/today_cve_sorted_by_vendor
 /subscribe
 /favorised
 /terminology
@@ -91,7 +90,7 @@ def levelOfCriticity(message):
         else : 
             bot.edit_message_text(cve, loading.chat.id, loading.message_id)
 
-@bot.message_handler(commands=['today_cve_sorted_by_asset'])
+@bot.message_handler(commands=['today_cve_sorted_by_vendor'])
 def CVESortedByVendorOrProduct(message):
     if timeOutAPI() == True : 
         bot.reply_to(message, "Api is not reachable at the moment")
