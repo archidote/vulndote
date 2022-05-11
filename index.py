@@ -1,5 +1,6 @@
 import schedule, threading, time, telebot
 from telebot import *
+from assets.cwe import cweSortedByYear
 from assets.subscriber import checkIfUserIsAlreadyASubscriber, deleteSubscriber, insertSubscriber
 from assets.cveToday import * 
 from assets.controller import * 
@@ -12,10 +13,13 @@ from telebot.types import *
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN,parse_mode="HTML")
 
 help = """
-HELP MENU //
 
+ℹ️ HELP 
+
+CVE-2021-4034
 /today_cve_list 
 /today_cve_sorted_by_vendor
+/cwe
 /subscribe
 /favorised
 /terminology
@@ -60,6 +64,20 @@ def CVEOnTheFly(message):
         b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
         markup.add(b1, b2, b3, b4, b5, b6)
         bot.reply_to(message, cveSearch(reFormatedCVE,0), reply_markup=markup)
+
+       
+@bot.message_handler(commands=['cwe'])
+def todayCVEList(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    previousYear = int(currentYear) - 1 
+    bot.reply_to(message,cweSortedByYear(previousYear),reply_markup=markup)
+    
+    
+@bot.message_handler(regexp="^/Cwe@*") # TO DO 
+def CVEOnTheFly(message):
+    reFormatedCWE = cweReformated(message.text)
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    bot.reply_to(message, cweSortedByYear(int(reFormatedCWE)), reply_markup=markup)
         
 @bot.message_handler(commands=['today_cve_list'])
 def todayCVEList(message):
@@ -274,7 +292,6 @@ def callback_inline(call):
         bot.delete_message(call.message.chat.id, call.message.message_id)
         
     if call.data == "subscribe_vendor_alerts":
-        #print (call.message.json.message_id) # à revoir pour la facto et déplacer le checkage dans le backend pour bien séparer les responsbailités 
         check = checkIfUserIsAlreadyASubscriber("subscriber_vendor_alerts",str(call.message.chat.id))
         if check == True :
             markup = InlineKeyboardMarkup()
