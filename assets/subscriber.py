@@ -1,5 +1,4 @@
-import sqlite3
-from assets.functions import *
+from assets.controller import *
 
 def checkIfUserIsAlreadyASubscriber(tableName,chat_id):
     
@@ -14,8 +13,6 @@ def checkIfUserIsAlreadyASubscriber(tableName,chat_id):
 
 def insertSubscriber(chat_id,asset,vendor,api_request) : 
     
-    
-    
     cursor.execute(f"""SELECT chat_id FROM subscriber_vendor_alerts WHERE chat_id = {chat_id} ;""")
     results = cursor.fetchall()
     dbConnexion.commit()
@@ -29,8 +26,6 @@ def insertSubscriber(chat_id,asset,vendor,api_request) :
 
 def deleteSubscriber(asset, chat_id) : 
 
-    
-    
     if checkIfUserIsAlreadyASubscriber("subscriber_"+asset+"_alerts",chat_id) == True : 
         cursor.execute(f"""DELETE FROM subscriber_{asset}_alerts WHERE chat_id = {chat_id}""")
         dbConnexion.commit()

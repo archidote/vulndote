@@ -26,4 +26,6 @@ cursor = dbConnexion.cursor()
 today = now = datetime.now()
 today = now.strftime("%Y-%m-%d")
 
+currentYear = now.strftime("%Y")
+
 

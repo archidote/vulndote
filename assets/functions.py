@@ -30,6 +30,13 @@ def cveReformated(cveNotFormated) :
     
     return cveReFormated
 
+def cweReformated(cveNotFormated) : 
+    
+    cveReFormated = cveNotFormated
+    cveReFormated = cveReFormated.replace("/Cwe@", "")
+    
+    return cveReFormated
+
 def cveFormatedForRegex(cveNotFormated) : 
     
     cveReFormated = cveNotFormated
