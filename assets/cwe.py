@@ -15,7 +15,7 @@ def cweSortedByYear(year) : # Integer
     soup = BeautifulSoup(response.text, 'html.parser')
     arrays = soup.findAll('table', attrs={"id":"Detail","style":"margin-left:auto; margin-right:auto;"})
     
-    output = "🎯 CWE for :"+year+"\n"
+    output = "🎯 CWE for :"+year+" 📝 \n"
     output += "Most Dangerous Software Weaknesses\n\n"
     tupleToStr = ""
     i = 0

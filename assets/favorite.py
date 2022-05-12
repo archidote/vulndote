@@ -1,5 +1,3 @@
-
-import sqlite3
 import datetime as dt
 from assets.controller import *
 from assets.cveAdditionalInformation import cvssScale

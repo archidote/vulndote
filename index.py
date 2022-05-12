@@ -1,6 +1,8 @@
-import schedule, threading, time, telebot
+import schedule, threading, telebot
+import time as t
 from telebot import *
 from assets.cwe import cweSortedByYear
+from assets.owasp import owaspTopTen
 from assets.subscriber import checkIfUserIsAlreadyASubscriber, deleteSubscriber, insertSubscriber
 from assets.cveToday import * 
 from assets.controller import * 
@@ -20,6 +22,7 @@ CVE-2021-4034
 /today_cve_list 
 /today_cve_sorted_by_vendor
 /cwe
+/owasp
 /subscribe
 /favorised
 /terminology
@@ -71,6 +74,11 @@ def todayCVEList(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     previousYear = int(currentYear) - 1 
     bot.reply_to(message,cweSortedByYear(previousYear),reply_markup=markup)
+    
+@bot.message_handler(commands=['owasp'])
+def todayCVEList(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    bot.reply_to(message,owaspTopTen(),reply_markup=markup)
     
     
 @bot.message_handler(regexp="^/Cwe@*") # TO DO 
@@ -356,7 +364,7 @@ schedule.every(20).minutes.do(lambda: checkEveryHourNewCveForSubsribedUsers())
 def scheduleApiFetching(): # à renomer pour que ça soit plus clair !
     while True:
         schedule.run_pending()
-        time.sleep(1)
+        t.sleep(1)
 
 t1 = threading.Thread(target = scheduleApiFetching)
 t1.start()

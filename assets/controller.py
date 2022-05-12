@@ -1,7 +1,4 @@
 
-import telebot
-from telebot import *
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from datetime import datetime
 import requests
 import os
