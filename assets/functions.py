@@ -61,6 +61,13 @@ def hello(chat_id,first_name,started_bot_date):
     dbConnexion.commit()
     return 0
 
+def getVendorOrProduct(chat_id): 
+    
+    cursor.execute(f"""SELECT vendor FROM subscriber_vendor_alerts WHERE chat_id = {chat_id}""")
+    dbConnexion.commit()
+    vendor = cursor.fetchall()
+    return vendor[0][0] 
+
 def formatDate(rawDate) : # Facto possible avec les deux fonctions ci-desssous
     
     res = rawDate.split("T")[0]
