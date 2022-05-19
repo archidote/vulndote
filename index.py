@@ -19,8 +19,8 @@ help = """
 ℹ️ HELP 
 
 CVE-2021-4034
-/today_cve_list 
-/today_cve_sorted_by_vendor
+/today
+/today_vendor
 /cwe
 /owasp
 /subscribe
@@ -28,16 +28,18 @@ CVE-2021-4034
 /terminology
 
 """
+# /week_vendor
+# /month_vendor
 
 @bot.message_handler(commands=['start'])
 def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     today = date.today()
     hello(message.chat.id,message.from_user.first_name,today)
-    bot.reply_to(message, "Hello", reply_markup=markup)
+    bot.reply_to(message, "Hello 👋, welcome to Vulndote telegram bot !\nTap /help to know my abilities", reply_markup=markup)
         
 @bot.message_handler(regexp="^CVE-*")
-def CVEOnTheFly(message):
+def cve_code_input(message):
     if timeOutAPI() == True : 
         bot.reply_to(message, "Api is not reachable at the moment")
     else : 
@@ -53,7 +55,7 @@ def CVEOnTheFly(message):
         bot.reply_to(message, cveSearch(reFormatedCVE,0), reply_markup=markup)
         
 @bot.message_handler(regexp="^/Cve@*")
-def CVEOnTheFly(message):
+def catch_cve_on_the_fly(message):
     if timeOutAPI() == True : 
         bot.reply_to(message, "Api is not reachable at the moment")
     else : 
@@ -70,13 +72,13 @@ def CVEOnTheFly(message):
 
        
 @bot.message_handler(commands=['cwe'])
-def todayCVEList(message):
+def cwe(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     previousYear = int(currentYear) - 1 
     bot.reply_to(message,cweSortedByYear(previousYear),reply_markup=markup)
     
 @bot.message_handler(commands=['owasp'])
-def todayCVEList(message):
+def owasp(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     bot.reply_to(message,owaspTopTen(),reply_markup=markup)
     
@@ -87,7 +89,7 @@ def CVEOnTheFly(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     bot.reply_to(message, cweSortedByYear(int(reFormatedCWE)), reply_markup=markup)
         
-@bot.message_handler(commands=['today_cve_list'])
+@bot.message_handler(commands=['today'])
 def todayCVEList(message):
     if timeOutAPI() == True : 
         bot.reply_to(message, "Api is not reachable at the moment")
@@ -116,7 +118,7 @@ def levelOfCriticity(message):
         else : 
             bot.edit_message_text(cve, loading.chat.id, loading.message_id)
 
-@bot.message_handler(commands=['today_cve_sorted_by_vendor'])
+@bot.message_handler(commands=['today_vendor'])
 def CVESortedByVendorOrProduct(message):
     if timeOutAPI() == True : 
         bot.reply_to(message, "Api is not reachable at the moment")
@@ -128,7 +130,7 @@ def CVESortedByVendorOrProduct(message):
 @bot.message_handler(commands=['subscribe'])
 def subscribe(message):
 	markup = InlineKeyboardMarkup()	
-	b1 = InlineKeyboardButton(text='Vendor', callback_data = 'subscribe_vendor_alerts')
+	b1 = InlineKeyboardButton(text='Vendor/Product', callback_data = 'subscribe_vendor_alerts')
 	markup.add(b1)
 	bot.reply_to(message, "Subscribe Menu :", reply_markup=markup)
 
@@ -157,12 +159,12 @@ def unFavOntheFly(message):
         
  
 @bot.message_handler(commands=['terminology'])
-def termInfo(message):
+def terminology(message):
 	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 	bot.reply_to(message,terminology(), reply_markup=markup, disable_web_page_preview=True)
  
 def checkEveryHourNewCveForSubsribedUsers():
-    print ("Execution of sendAlertAutoVendor()")
+    print ("Execution of sendAlertAutoVendor()"+todayHS)
     cursor.execute(f"""SELECT * FROM subscriber_vendor_alerts """)
     rows = cursor.fetchall()
             
@@ -185,8 +187,6 @@ def checkEveryHourNewCveForSubsribedUsers():
                     newCVEs += cveSearch(data[i]["id"],1)
                     newCVEs = summaryRegex(newCVEs) # Escape other chars than common HTML special chars like &amp;
                     bot.send_message(chat_id,newCVEs,disable_web_page_preview=True)
-                    # send_text = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage?chat_id=' + str(chat_id)+ '&parse_mode=HTML&text=' + newCVEs + ''
-                    # response = requests.get(send_text)
                 else : 
                     print ("CVE"+data[i]["id"]+"has been ALREADY fetched for"+vendor+" - user id :"+str(chat_id))
                     CVEs += data[i]["id"]+","
@@ -211,18 +211,19 @@ def which_reply(message):
             b3 = InlineKeyboardButton(text='Medium',callback_data='Medium')
             b4 = InlineKeyboardButton(text='Low', callback_data='Low')
             markup.add(b1, b2, b3, b4)
-            bot.send_message(message.from_user.id,"⏳")
+            loading = bot.reply_to(message,"⏳")
             cve = cveTodaySortedByVendor(message.text)
             if cve == "No CVE(s) have been registered today for this vendor/product." :
-                bot.reply_to(message, cve)
+                bot.edit_message_text(message_id=loading.id,chat_id=loading.chat.id, text=cve)
             elif cve == VENDOR_OR_PRODUCT_NOT_FOUND :
-                bot.reply_to(message, cve)
+                bot.edit_message_text(message_id=loading.id,chat_id=loading.chat.id, text=cve)
             else :  
                 if len(cve) > 4096 :
                     for x in range(0, len(cve), 4096): # Allow vulndote to send big GLOBAL message (split in x messages)
                         bot.reply_to(message, text=cve[x:x+4096], reply_markup=markup)
                 else : 
-                    bot.reply_to(message, cve, reply_markup=markup)
+                    bot.edit_message_text(message_id=loading.id,chat_id=loading.chat.id, text=cve, reply_markup=markup)
+
                     
         elif message.reply_to_message.text == "Enter your a vendor/product name to be notifyed." : 
             if cveTodaySortedByVendor(message.text) == VENDOR_OR_PRODUCT_NOT_FOUND :
@@ -306,7 +307,7 @@ def callback_inline(call):
             b1 = InlineKeyboardButton(text='Unsubscribe', callback_data = 'unsubscribe_vendor_alerts')
             b2 = InlineKeyboardButton(text='Edit the vendor/product', callback_data = 'Edit_Vendor_Alerts')
             markup.add(b1,b2)
-            bot.reply_to(call.message,"You are already subscribed. to",reply_markup=markup)
+            bot.reply_to(call.message,"You are already subscribed to : <b>"+getVendorOrProduct(call.message.chat.id)+"</b>",reply_markup=markup)
         else : 
             markup = telebot.types.ForceReply()
             bot.reply_to(call.message, "Enter your a vendor/product name to be notifyed.", reply_markup=markup)
@@ -316,7 +317,7 @@ def callback_inline(call):
         b1 = InlineKeyboardButton(text='Yes', callback_data = 'unsubscribe_vendor_alerts_confirm')
         b2 = InlineKeyboardButton(text='No', callback_data = 'cancel')
         markup.add(b1, b2)
-        bot.send_message(call.message.chat.id, text="Are you sure you want <b>unsubscribe</b> to <b>vendors/products</b> alerts?", reply_markup=markup)
+        bot.send_message(call.message.chat.id, text="⚠️ Are you sure you want <b>unsubscribe</b> to <b>vendors/products</b> alerts?", reply_markup=markup)
         bot.answer_callback_query(call.id, "Are you sure?")
         
     if call.data == "Favorite":
@@ -353,7 +354,7 @@ def callback_inline(call):
 ###################################################################################################################   
         
     if call.data == "unsubscribe_vendor_alerts_confirm":
-        bot.answer_callback_query(call.id, "You unsubscribed to allergie alerts")
+        bot.answer_callback_query(call.id, "Unsubscribed !")
         bot.edit_message_text(message_id=call.message.id, chat_id=call.message.chat.id, text=deleteSubscriber("vendor",call.message.chat.id))
 
 ###################################################################################################################
@@ -361,12 +362,12 @@ def callback_inline(call):
 ###################################################################################################################  
 schedule.every(20).minutes.do(lambda: checkEveryHourNewCveForSubsribedUsers())
 
-def scheduleApiFetching(): # à renomer pour que ça soit plus clair !
+def schedule_api_fetching(): 
     while True:
         schedule.run_pending()
         t.sleep(1)
 
-t1 = threading.Thread(target = scheduleApiFetching)
+t1 = threading.Thread(target = schedule_api_fetching)
 t1.start()
 
 ###################################################################################################################
