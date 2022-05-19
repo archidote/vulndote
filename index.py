@@ -18,7 +18,7 @@ help = """
 
 ℹ️ HELP 
 
-CVE-2021-4034
+"CVE-2021-4034"
 /today
 /today_vendor
 /cwe
@@ -159,7 +159,7 @@ def unFavOntheFly(message):
         
  
 @bot.message_handler(commands=['terminology'])
-def terminology(message):
+def terms(message):
 	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 	bot.reply_to(message,terminology(), reply_markup=markup, disable_web_page_preview=True)
  
