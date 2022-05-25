@@ -16,5 +16,3 @@ setup(
     install_requires=["beautifulsoup4", "httpx", "PyGithub", "pyTelegramBotAPI", "requests", "schedule", "urllib3"],
     entry_points={"console_scripts": ["timechecker = src.main:main"]},
 )
-
-setup()
