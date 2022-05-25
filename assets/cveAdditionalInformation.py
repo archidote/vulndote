@@ -104,21 +104,56 @@ def moreInfo(cve) :
         return CVE_NOT_FOUND
         
     else :
-        impact = "<b>CVE</b> : "+data["id"]+"\n"
-        impact += "<b>CVSS version</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["version"]+"\n\n"
-        impact += "<b>Attack Vector</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackVector"]+"\n"
-        impact += "<b>Attack Complexity</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackComplexity"]+"\n"
-        impact += "<b>Raw CVSS Vector</b> : \n\n"
-        impact += ""+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["vectorString"]+"\n\n"
-        impact += "<b>Attack Complexity</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackComplexity"]+"\n"
-        impact += "<b>Availibility Impact</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["availabilityImpact"]+"\n"
-        impact += "<b>Privileges required ?</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["privilegesRequired"]+"\n"
-        impact += "<b>Confidentiality</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["confidentialityImpact"]+"\n\n"
-        impact += "<b>Impact Score</b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV3"]["impactScore"])+"\n"
-        impact += "<b>Exploitability Score</b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV3"]["exploitabilityScore"])+"\n\n"
-        impact += "<i>If you don't understand terms</i> : /terminology"
-        
-        return impact 
+        if data["cvss"]["v3"] :
+ 
+            output = "<b>CVE</b> : "+data["id"]+"\n"
+            output +=  "<b>CVSS version</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["version"]+"\n\n"
+            output +=  "<b>Attack Vector</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackVector"]+"\n"
+            output +=  "<b>Attack complexity </b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackComplexity"])+"\n"
+            output +=  "<b>Raw CVSS Vector</b> : \n\n"
+            output +=  ""+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["vectorString"]+"\n\n"
+            
+            output +=  "<u><b>Impact</b></u> : \n"
+            output +=  "<b>    Integrity</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["integrityImpact"]+"\n"
+            output +=  "<b>    Availibility</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["availabilityImpact"]+"\n"
+            output +=  "<b>    Confidentiality</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["confidentialityImpact"]+"\n"
+            output +=  "<b>    Impact Score : </b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV3"]["impactScore"])+"\n\n"
+            
+            output += "<u><b>Others Metrics</b></u> : \n"
+            output +=  "<b>    Severity </b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["baseSeverity"]+"\n"
+            output +=  "<b>    Privileges required ? </b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["privilegesRequired"])+"\n"
+            output +=  "<b>    User interaction ? </b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["userInteraction"])+"\n"
+            output +=  "<b>    Exploitability Score ? </b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV3"]["exploitabilityScore"])+"\n\n"
+            
+            output +=  "<i>If you don't understand terms</i> : /terminology"
+
+            
+        else : # V2
+
+            output = "<b>CVE</b> : "+data["id"]+"\n"
+            output +=  "<b>CVSS version</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV2"]["cvssV2"]["version"]+"\n\n"
+            output +=  "<b>Attack Vector</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV2"]["cvssV2"]["accessVector"]+"\n"
+            output +=  "<b>Attack Complexity</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV2"]["cvssV2"]["accessComplexity"]+"\n\n"
+            output +=  "<b>Raw CVSS Vector</b> : \n\n"
+            output +=  ""+data["raw_nvd_data"]["impact"]["baseMetricV2"]["cvssV2"]["vectorString"]+"\n\n"
+            
+            output +=  "<u><b>Impact</b></u> : \n"
+            output +=  "<b>    Integrity</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV2"]["cvssV2"]["integrityImpact"]+"\n"
+            output +=  "<b>    Availibility</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV2"]["cvssV2"]["availabilityImpact"]+"\n"
+            output +=  "<b>    Confidentiality</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV2"]["cvssV2"]["confidentialityImpact"]+"\n"
+            output +=  "<b>    Impact Score : </b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV2"]["impactScore"])+"\n\n"
+            
+            output +=  "<u><b>Attack Vectors</b></u> : \n"
+            output +=  "<b>    Severity</b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV2"]["severity"])+"\n"
+            output +=  "<b>    Authentification ? </b> : "+data["raw_nvd_data"]["impact"]["baseMetricV2"]["cvssV2"]["authentication"]+"\n"
+            output +=  "<b>        Obtain All Privileges ? </b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV2"]["obtainAllPrivilege"])+"\n"
+            output +=  "<b>        Obtain All Privileges ? </b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV2"]["obtainUserPrivilege"])+"\n"
+            output +=  "<b>        Obtain All Privileges ? </b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV2"]["obtainOtherPrivilege"])+"\n"
+            output +=  "<b>        Obtain All Privileges ? </b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV2"]["userInteractionRequired"])+"\n\n"
+            
+            output +=  "<i>If you don't understand terms</i> : /terminology"
+
+        return output
     
 def cveCommonInfo(data) :
                
