@@ -7,17 +7,19 @@ def terminology() :
     
     terms = """ 
 
-<b>CVE</b> : Common Vulnerabilities and Exposures
-    ℹ️  <a href="https://en.wikipedia.org/wiki/Common_Vulnerabilities_and_Exposures">🔗 Link</a>
-<b>CVSS</b> : Common Vulnerability Scoring System (0->10)
-    ℹ️  <a href="https://en.wikipedia.org/wiki/Common_Vulnerability_Scoring_System">🔗 Link</a>
-<b>CVSS-Vector</b> : AV:N/AC:L/Au:N/C:N/I:N/A:P
-    ℹ️ cvss-vector (v2): <a href="https://www.first.org/cvss/v2/guide">🔗 Link</a>
-    ℹ️ cvss-vector (v3): <a href="https://www.first.org/cvss/calculator/3.0">🔗 Link</a>
-<b>CWE</b> : Common Weakness Enumeration
-    ℹ️ <a href="https://en.wikipedia.org/wiki/Common_Weakness_Enumeration">🔗 Link</a>
-<b>CPE</b> : Common Platform Enumeration
-    ℹ️ <a href="https://en.wikipedia.org/wiki/Common_Platform_Enumeration">🔗 Link</a>
+<b>CVE</b> : 
+    <a href="https://en.wikipedia.org/wiki/Common_Vulnerabilities_and_Exposures">🔗 Common Vulnerabilities and Exposures</a>\n
+<b>CVSS</b> : 
+    <a href="https://en.wikipedia.org/wiki/Common_Vulnerability_Scoring_System">🔗 Common Vulnerability Scoring System</a>\n
+<b>CVSS-Vector</b> : 
+    <a href="https://www.first.org/cvss/v2/guide">🔗 cvss-vector (v2)</a>
+    <a href="https://www.first.org/cvss/calculator/3.0">🔗 cvss-vector (v3)</a>\n
+<b>CPE</b> : 
+    <a href="https://en.wikipedia.org/wiki/Common_Platform_Enumeration">🔗 Common Platform Enumeration</a>\n
+<b>CWE</b> : 
+    <a href="https://en.wikipedia.org/wiki/Common_Weakness_Enumeration">🔗 Common Weakness Enumeration</a>\n
+<b>OWASP</b>
+    <a href="https://en.wikipedia.org/wiki/Common_Weakness_Enumeration">🔗 Open Web Application Security Project</a>
     """
     return terms
 

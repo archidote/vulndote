@@ -16,9 +16,9 @@ bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN,parse_mode="HTML")
 
 help = """
 
-ℹ️ HELP 
+ℹ️ HELP 🛟 Features that you can use :
 
-"CVE-2021-4034"
+Information about a CVE - Ex : CVE-2021-4034
 /today
 /today_vendor
 /cwe
@@ -26,7 +26,7 @@ help = """
 /subscribe
 /favorised
 /terminology
-
+/demo_yt
 """
 # /week_vendor
 # /month_vendor
@@ -45,11 +45,11 @@ def cve_code_input(message):
     else : 
         reFormatedCVE = cveReformated(message.text)
         markup = InlineKeyboardMarkup()
-        b1 = InlineKeyboardButton(text='💻/📦 Affected',callback_data='Products_Affected')
+        b1 = InlineKeyboardButton(text='💻/📦',callback_data='Products_Affected')
         b2 = InlineKeyboardButton(text='📖 Ref', callback_data='References')
         b3 = InlineKeyboardButton(text='ℹ️', callback_data='More_Info')
-        b4 = InlineKeyboardButton(text='🔍 PoC on sploitus ?', callback_data='Available_Exploits_With_Sploitus')
-        b5 = InlineKeyboardButton(text='🔍 PoC on Github ?', callback_data='Available_Exploits_Only_With_Github')
+        b4 = InlineKeyboardButton(text='🔍 Sploitus PoC', callback_data='Available_Exploits_With_Sploitus')
+        b5 = InlineKeyboardButton(text='🔍 Github PoC ?', callback_data='Available_Exploits_Only_With_Github')
         b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
         markup.add(b1, b2, b3, b4, b5, b6)
         bot.reply_to(message, cveSearch(reFormatedCVE,0), reply_markup=markup)
@@ -61,11 +61,11 @@ def catch_cve_on_the_fly(message):
     else : 
         reFormatedCVE = cveReformated(message.text)
         markup = InlineKeyboardMarkup()
-        b1 = InlineKeyboardButton(text='💻/📦 Affected',callback_data='Products_Affected')
+        b1 = InlineKeyboardButton(text='💻/📦',callback_data='Products_Affected')
         b2 = InlineKeyboardButton(text='📖 Ref', callback_data='References')
         b3 = InlineKeyboardButton(text='ℹ️', callback_data='More_Info')
-        b4 = InlineKeyboardButton(text='🔍 PoC on sploitus ?', callback_data='Available_Exploits_With_Sploitus')
-        b5 = InlineKeyboardButton(text='🔍 PoC on Github ?', callback_data='Available_Exploits_Only_With_Github')
+        b4 = InlineKeyboardButton(text='🔍 Sploitus PoC', callback_data='Available_Exploits_With_Sploitus')
+        b5 = InlineKeyboardButton(text='🔍 Github PoC ?', callback_data='Available_Exploits_Only_With_Github')
         b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
         markup.add(b1, b2, b3, b4, b5, b6)
         bot.reply_to(message, cveSearch(reFormatedCVE,0), reply_markup=markup)
