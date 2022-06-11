@@ -1,13 +1,19 @@
 
-from datetime import datetime
 import requests
 import os
 import sqlite3
+from dotenv import load_dotenv
+from datetime import datetime
 
-OPEN_CVE_API_USERNAME = os.environ.get('OPEN_CVE_API_USERNAME')
-OPEN_CVE_API_PASSWORD = os.environ.get('OPEN_CVE_API_PASSWORD')
-TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
-GITHUB_TOKEN_READ_ONLY_PUBLIC_REPOSITORY = os.environ.get('GITHUB_TOKEN_READ_ONLY_PUBLIC_REPOSITORY')
+# TOKEN FROM /.ENV file 
+
+load_dotenv()
+
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+OPEN_CVE_API_USERNAME = os.getenv('OPEN_CVE_API_USERNAME')
+OPEN_CVE_API_PASSWORD = os.getenv('OPEN_CVE_API_PASSWORD')
+GITHUB_TOKEN_READ_ONLY_PUBLIC_REPOSITORY = os.getenv('GITHUB_TOKEN_READ_ONLY_PUBLIC_REPOSITORY')
+
 OPEN_CVE_API_URL = "https://www.opencve.io/api/cve/"
 OPEN_CVE_API_URL_PARAMS = "https://www.opencve.io/api/cve?"
 CVE_NOT_FOUND = "CVE was not found."

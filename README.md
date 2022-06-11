@@ -2,23 +2,12 @@
 
 # Installation (Classical)
 
-Add to your ~/.*rc depending of your shell version the following env variables :
+Add a .env file in the root path of the git project :
 ```
-nano ~/.bashrc 
-# OR 
-nano ~/.zshrc
-```
-```
-export TELEGRAM_BOT_TOKEN="" # Provide a telegram bot token 
-export VULNDOTE_API_USERNAME="" # Provide a opencve.io api user
-export VULNDOTE_API_PASSWORD="" # Provide a opencve.io api password
-export GITHUB_TOKEN_READ_ONLY_PUBLIC_REPOSITORY="" Provide a github token (read only public repository)
-```
-To save these variable directly in your current shell, run the following command :
-```
-source .bashrc 
-# OR 
-source .zshrc
+TELEGRAM_BOT_TOKEN="" # Provide a telegram bot token 
+VULNDOTE_API_USERNAME="" # Provide a opencve.io api user
+VULNDOTE_API_PASSWORD="" # Provide a opencve.io api password
+GITHUB_TOKEN_READ_ONLY_PUBLIC_REPOSITORY="" Provide a github token (read only public repository)
 ```
 Install the required dependencies :
 
@@ -36,24 +25,14 @@ python3.X index.py &
 ```
 user@ubuntuu:~$ sudo apt install python3-venv
 ```
-Add to your ~/.*rc depending of your shell version the following env variables :
+Add a .env file in the root path of the git project :
 ```
-user@ubuntuu:~$ nano ~/.bashrc 
-# OR 
-user@ubuntuu:~$ nano ~/.zshrc
+TELEGRAM_BOT_TOKEN="" # Provide a telegram bot token 
+VULNDOTE_API_USERNAME="" # Provide a opencve.io api user
+VULNDOTE_API_PASSWORD="" # Provide a opencve.io api password
+GITHUB_TOKEN_READ_ONLY_PUBLIC_REPOSITORY="" Provide a github token (read only public repository)
 ```
-```
-export TELEGRAM_BOT_TOKEN="" # Provide a telegram bot token 
-export VULNDOTE_API_USERNAME="" # Provide a opencve.io api user
-export VULNDOTE_API_PASSWORD="" # Provide a opencve.io api password
-export GITHUB_TOKEN_READ_ONLY_PUBLIC_REPOSITORY="" Provide a github token (read only public repository)
-```
-To save these variable directly in your current shell, run the following command :
-```
-user@ubuntuu:~$ source .bashrc 
-# OR 
-user@ubuntuu:~$ source .zshrc
-```
+
 ## Jump to virtual env
 
 ```
