@@ -1,10 +1,10 @@
 #!/bin/bash
-TARGET="/home/geoffrey/weathergilant"
-GIT_DIR="/home/geoffrey/weathergilant_"
-BRANCH="main"
+TARGET="/home/geoffrey/vulndote"
+GIT_DIR="/home/geoffrey/vulndote_"
+BRANCH="master"
 while read oldrev newrev ref
 do
-    ps -ef | grep "index.py" | grep -v grep | awk '{print $2}' | xargs kill
+    ps -ef | grep "run.py" | grep -v grep | awk '{print $2}' | xargs kill
     # only checking out the main (or whatever branch you would like to deploy)
     if [ "$ref" = "refs/heads/$BRANCH" ]; then
         echo "Ref $ref received. Deploying ${BRANCH} branch to production..."
@@ -13,6 +13,6 @@ do
         # perform more tasks like migrate and run test, the output of these commands will be shown on the push screen
         echo "Ref $ref received. Doing nothing: only the ${BRANCH} branch may be deployed on this server."
     fi
-    python3 /home/geoffrey/weathergilant/index.py &
+    python3 /home/geoffrey/vulndote/run.py &
 exit
 done
