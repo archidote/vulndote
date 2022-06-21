@@ -8,7 +8,7 @@ def favorite(cve_id,chat_id) :
     cvss = cvssScale(cve_id)
 
     cursor.execute(f"""INSERT OR IGNORE INTO favorite_cve(cve_id,date_fav,user_id,cvss) VALUES ('{cve_id}', '{today}', {chat_id}, '{cvss}');""")
-    dbConnexion.commit()
+    dbConnection.commit()
     return cve_id+" was added to your fav list. 📒\nTap /favorised to show your fav list."
 
 
@@ -24,7 +24,7 @@ def checkRowForFavorite(rows,Datetime) :
 def listFavoriteCVE(chat_id,t) : 
     
     cursor.execute(f"""SELECT cve_id, date_fav, cvss FROM favorite_cve WHERE user_id = {chat_id};""")
-    dbConnexion.commit()
+    dbConnection.commit()
     rows = cursor.fetchall()
     
     if t == "Fav_Sorted_By_This_Year" : 
@@ -51,7 +51,7 @@ def isThisCVEIsFavorised(chat_id,cve) :
     
     cursor.execute(f"""SELECT cve_id,user_id FROM favorite_cve WHERE user_id = {chat_id} AND cve_id = '{cve}';""")
     results = cursor.fetchall()
-    dbConnexion.commit()
+    dbConnection.commit()
     
     if len(results) == 0 : 
         return "CVE is not registered as a fav asset."
@@ -65,11 +65,11 @@ def unfav(chat_id,cve) : # Faire une deuxième req select après pour vérifier
     
     cursor.execute(f"""SELECT cve_id,user_id FROM favorite_cve WHERE user_id = {chat_id} AND cve_id = '{cve}';""")
     results = cursor.fetchall()
-    dbConnexion.commit()
+    dbConnection.commit()
     if len(results) == 0 :
         return cve+" is not registered in your fav list.\n Fav it ? ➡️ :/Cve@"+cveFormatedForRegex(cve)+"\n\n"
     else : 
         cursor.execute(f"""DELETE FROM favorite_cve WHERE user_id = {chat_id} AND cve_id = '{cve}';""")
-        dbConnexion.commit()
+        dbConnection.commit()
         return cve+" was removed from your fav list."
         

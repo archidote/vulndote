@@ -194,11 +194,12 @@ def checkEveryHourNewCveForSubsribedUsers():
             else : 
                 print ("No new CVE for :"+vendor+" today - user id :"+str(chat_id))
                 
-    dbConnexion.commit() 
+    dbConnection.commit() 
 
 ###################################################################################################################
 #                                             FETCH ANSWERS OF AN /action                                         #
 ###################################################################################################################   
+
 @bot.message_handler(func=lambda m: True)
 def which_reply(message):
     if message.reply_to_message == None:
@@ -360,7 +361,7 @@ def callback_inline(call):
 ###################################################################################################################
 #           SCHEDULE THE AUTO FETCHING API TO GET THE LATEST CVE FROM THE SUBSCRIBER'S VENDOR PREFERENCE          #
 ###################################################################################################################  
-schedule.every(20).minutes.do(lambda: checkEveryHourNewCveForSubsribedUsers())
+schedule.every(59).minutes.do(lambda: checkEveryHourNewCveForSubsribedUsers())
 
 def schedule_api_fetching(): 
     while True:

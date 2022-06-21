@@ -23,8 +23,10 @@ session = requests.Session()
 session.auth = (OPEN_CVE_API_USERNAME, OPEN_CVE_API_PASSWORD)
 auth = session.post('https://www.opencve.io/api/')
 
-dbConnexion = sqlite3.connect('assets/vulndote.db',check_same_thread=False)
-cursor = dbConnexion.cursor()
+database_path = os.path.expanduser("~")+"/databases_projects/vulndote/vulndote.db" #  /home/$USER/databases_projects/vulndote/vulndote.db
+dbConnection = sqlite3.connect(database_path,check_same_thread=False)
+cursor = dbConnection.cursor()
+
 
 today = now = datetime.now()
 today = now.strftime("%Y-%m-%d")
