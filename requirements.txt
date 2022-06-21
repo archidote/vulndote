@@ -1,5 +1,5 @@
 beautifulsoup4==4.11.1
-httpx==0.22.0
+httpx[http2]==0.22.0
 PyGithub==1.55
 pyTelegramBotAPI==4.5.1
 python-dotenv==0.20.0
