@@ -44,7 +44,7 @@ def collectCVE_ID_TodaySortedByVendor(vendor,chat_id) :
         if cve : # IF cve variable is not empty 
             cursor.execute(f"""UPDATE subscriber_vendor_alerts SET api_request = '{cve}' WHERE chat_id = '{chat_id}';""") # à tester en raw 
             cursor.execute(f"""UPDATE subscriber_vendor_alerts SET refresh_date = '{today}' WHERE chat_id = '{chat_id}';""") # à tester en raw 
-            dbConnexion.commit()
+            dbConnection.commit()
             
             return cve  
         else : 

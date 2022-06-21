@@ -60,13 +60,13 @@ def timeOutAPI() :
 def hello(chat_id,first_name,started_bot_date): 
     
     cursor.execute(f"""INSERT OR IGNORE INTO user(id,first_name,started_bot_date) VALUES ({chat_id},'{first_name}','{started_bot_date}')""")
-    dbConnexion.commit()
+    dbConnection.commit()
     return 0
 
 def getVendorOrProduct(chat_id): 
     
     cursor.execute(f"""SELECT vendor FROM subscriber_vendor_alerts WHERE chat_id = {chat_id}""")
-    dbConnexion.commit()
+    dbConnection.commit()
     vendor = cursor.fetchall()
     return vendor[0][0] 
 
