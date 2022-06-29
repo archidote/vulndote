@@ -19,7 +19,7 @@ Once the following dependencies has been installed, you can run the bot with the
 ```
 python3.X index.py &
 ```
-# Installation with a python virtual environnement (venv) 
+# Installation with a python virtual environnement (python venv) 
 
 ## Install python3-venv 
 ```
