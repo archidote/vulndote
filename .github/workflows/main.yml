@@ -18,3 +18,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  deploy: 
+    runs-on: ubuntu-latest 
+    steps : 
+      - name : Install private SSH Key 
+        uses : shimataro/ssh-key-action@v2 
+        with : 
+          key : ${{ secrets.SSH_PRIVATE_KEY }}
+          know_hosts : ${{ secrets.CONFIG }}}
+          config : ${{ secrets.CONFIG }}
+          if_key_exists: fail 
+      - name : Pull 
+        run : ssh user@x.x.x.x "cd /home/user/weathergilannt" && /usr/bin/git pull origin main 
