@@ -2,7 +2,7 @@ name: CI/CD - code analysis and if it's ok auto deploy
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -35,5 +35,5 @@ jobs:
           ssh user@x.x.x.x '/usr/bin/nohup /usr/bin/kill -9 $(/usr/bin/pgrep -f run.py) > /dev/null 2>&1 &'
           ssh user@x.x.x.x '
           cd /home/user/vulndoote
-          /usr/bin/git pull origin main 
+          /usr/bin/git pull origin master
           /usr/bin/nohup /usr/bin/python3 /home/user/vulndoote/run.py > /dev/null 2>&1 &'
