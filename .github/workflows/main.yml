@@ -1,10 +1,11 @@
-name: sonarcloud
+name: CI/CD - code analysis and if it's ok auto deploy 
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   sonarcloud:
     name: SonarCloud
@@ -18,3 +19,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  deploy:
+    needs: sonarcloud 
+    runs-on: ubuntu-latest 
+    steps : 
+      - name : Install private SSH Key 
+        uses : shimataro/ssh-key-action@v2 
+        with : 
+          key : ${{ secrets.SSH_PRIVATE_KEY }} # copy and paste a private key to a github secret of your current repo
+          known_hosts : ${{ secrets.SSH_KNOW_HOST }} # optional, but add at the beggining of your line : ssh -o StrictHostKeyChecking=no user@x.x.x.x
+          if_key_exists: ignore
+      - name : Pull
+        run : | 
+          ssh user@x.x.x.x '/usr/bin/nohup /usr/bin/kill -9 $(/usr/bin/pgrep -f run.py) > /dev/null 2>&1 &'
+          ssh user@x.x.x.x '
+          cd /home/user/vulndoote
+          /usr/bin/git pull origin main 
+          /usr/bin/nohup /usr/bin/python3 /home/user/vulndoote/run.py > /dev/null 2>&1 &'
