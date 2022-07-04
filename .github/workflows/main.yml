@@ -32,8 +32,8 @@ jobs:
           if_key_exists: ignore
       - name : Pull
         run : | 
-          ssh user@x.x.x.x '/usr/bin/nohup /usr/bin/kill -9 $(/usr/bin/pgrep -f run.py) > /dev/null 2>&1 &'
+          ssh user@x.x.x.x '/usr/bin/screen -X -S vulndote quit'
           ssh user@x.x.x.x '
           cd /home/user/vulndoote
           /usr/bin/git pull origin master
-          /usr/bin/nohup /usr/bin/python3 /home/user/vulndoote/run.py > /dev/null 2>&1 &'
+          /usr/bin/screen -S vulndote -d -m bash -c 'python3 /home/user/vulndoote/run.py'
