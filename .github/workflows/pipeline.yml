@@ -34,6 +34,6 @@ jobs:
         run : | 
           ssh user@x.x.x.x '/usr/bin/screen -X -S vulndote quit'
           ssh user@x.x.x.x '
-          cd /home/user/vulndoote
-          /usr/bin/git pull origin master
-          /usr/bin/screen -S vulndote -d -m bash -c 'python3 /home/user/vulndoote/run.py''
+          cd /home/user/vulndoote ;
+          /usr/bin/git pull origin master ; 
+          /usr/bin/screen -S vulndote -d -m bash -c '/usr/bin/python3 /home/user/vulndoote/run.py';'
