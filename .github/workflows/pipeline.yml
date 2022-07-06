@@ -34,6 +34,6 @@ jobs:
         run : | 
           ssh geoffrey@141.94.77.149 '/usr/bin/screen -X -S vulndote quit'
           ssh geoffrey@141.94.77.149 '
-          cd /home/geoffrey/vulndoote
-          /usr/bin/git pull origin master
-          /usr/bin/screen -S vulndote -d -m bash -c 'python3 /home/geoffrey/vulndoote/run.py''
+          cd /home/geoffrey/vulndoote ;
+          /usr/bin/git pull origin master ; 
+          /usr/bin/screen -S vulndote -d -m bash -c '/usr/bin/python3 /home/geoffrey/vulndoote/run.py';'
