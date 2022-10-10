@@ -23,7 +23,7 @@ def cveTodaySortedByVendor(vendor) :
             cve += "<b><i>Sort CVE by</i> : </b> "
             return cve  
         else : 
-            return "No CVE(s) have been registered today for this vendor/product."
+            return NO_CVE_HAVE_BEEN_REGISTERED_TODAY_FOR+""+vendor
 
 def collectCVE_ID_TodaySortedByVendor(vendor,chat_id) :  
     
@@ -48,7 +48,7 @@ def collectCVE_ID_TodaySortedByVendor(vendor,chat_id) :
             
             return cve  
         else : 
-            return "No CVE(s) have been registered today for this vendor/product."
+            return NO_CVE_HAVE_BEEN_REGISTERED_TODAY_FOR+" "+vendor
 
 def cveTodaySortedByCVSS(cvss) :  
     
@@ -65,7 +65,7 @@ def cveTodaySortedByCVSS(cvss) :
     if cve : # IF cve variable is not empty 
         return cve  
     else : 
-        return "No CVE(s) have been registered today yet with this level of threat : <b>"+cvss+"</b>"
+        return "No CVE have been registered today yet with this level of threat : <b>"+cvss+"</b>"
 
 def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok 
     
@@ -86,8 +86,4 @@ def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok
             cve += "<b><i>Sort CVE by</i> : </b> "
             return cve  
         else : 
-            return "No CVE(s) have been registered Today for <b>"+vendor+"</b> with this level of threat : <b>"+cvss+"</b>"
-
-# print (cveTodaySortedByVendor("microsoft"))
-# print (cveTodaySortedByCVSS("critical"))
-# print (cveTodaySortedByVendorAndCVSS("Microsoft","Low"))
+            return NO_CVE_HAVE_BEEN_REGISTERED_TODAY_FOR+" <b>"+vendor+"</b> with this level of threat : <b>"+cvss+"</b>"

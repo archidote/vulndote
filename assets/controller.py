@@ -18,6 +18,7 @@ OPEN_CVE_API_URL = "https://www.opencve.io/api/cve/"
 OPEN_CVE_API_URL_PARAMS = "https://www.opencve.io/api/cve?"
 CVE_NOT_FOUND = "CVE was not found."
 VENDOR_OR_PRODUCT_NOT_FOUND = "Vendor or product was not found."
+NO_CVE_HAVE_BEEN_REGISTERED_TODAY_FOR = "No CVE have been registered Today for "
 
 session = requests.Session()
 session.auth = (OPEN_CVE_API_USERNAME, OPEN_CVE_API_PASSWORD)

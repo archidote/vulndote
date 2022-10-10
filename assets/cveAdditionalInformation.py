@@ -35,32 +35,35 @@ def cvssScale(cve):
     
     response = session.get('https://www.opencve.io/api/cve/'+cve+'')
     data = response.json() 
-    
-    if data["cvss"]["v3"] != None :
-        if data["cvss"]["v3"] < 4 : 
-            return "v3 : "+str(data["cvss"]["v3"])+" 🔵"
-        elif data["cvss"]["v3"] < 7 : 
-            return "v3 : "+str(data["cvss"]["v3"])+" 🟠" 
-        elif data["cvss"]["v3"] < 9 : 
-            return "v3 : "+str(data["cvss"]["v3"])+" 🔴"
+    print (data)
+    if data["cvss"]["v2"] != None or data["cvss"]["v3"] != None : # Sometimes a CVSS score could not be fetched, if the CVE has been revoked or rejected for any reasons
+        if data["cvss"]["v3"] != None :
+            if data["cvss"]["v3"] < 4 : 
+                return "v3 : "+str(data["cvss"]["v3"])+" 🔵"
+            elif data["cvss"]["v3"] < 7 : 
+                return "v3 : "+str(data["cvss"]["v3"])+" 🟠" 
+            elif data["cvss"]["v3"] < 9 : 
+                return "v3 : "+str(data["cvss"]["v3"])+" 🔴"
+            else : 
+                return "v3 : "+str(data["cvss"]["v3"])+" ⚫"
         else : 
-            return "v3 : "+str(data["cvss"]["v3"])+" ⚫"
+            if data["cvss"]["v2"] < 4 : 
+                return "v2 : "+str(data["cvss"]["v2"])+" 🔵"
+            elif data["cvss"]["v2"] < 7 : 
+                return "v2 : "+str(data["cvss"]["v2"])+" 🟠" 
+            elif data["cvss"]["v2"] < 9 : 
+                return "v2 : "+str(data["cvss"]["v2"])+" 🔴"
+            else : 
+                return "v2 : "+str(data["cvss"]["v2"])+" ⚫"
     else : 
-        if data["cvss"]["v2"] < 4 : 
-            return "v2 : "+str(data["cvss"]["v2"])+" 🔵"
-        elif data["cvss"]["v2"] < 7 : 
-            return "v2 : "+str(data["cvss"]["v2"])+" 🟠" 
-        elif data["cvss"]["v2"] < 9 : 
-            return "v2 : "+str(data["cvss"]["v2"])+" 🔴"
-        else : 
-            return "v2 : "+str(data["cvss"]["v2"])+" ⚫"
+        return ": CVSS score is not available."
 
 def cveReferences(cve) :
     
     response = session.get('https://www.opencve.io/api/cve/'+cve+'')
     data = response.json() 
 
-    
+    print (data)
     if "message" in data : 
         return CVE_NOT_FOUND
         

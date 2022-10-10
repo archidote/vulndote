@@ -1,3 +1,4 @@
+from unittest import result
 import schedule, threading, telebot
 import time as t
 from telebot import *
@@ -44,15 +45,19 @@ def cve_code_input(message):
         bot.reply_to(message, "Api is not reachable at the moment")
     else : 
         reFormatedCVE = cveReformated(message.text)
-        markup = InlineKeyboardMarkup()
-        b1 = InlineKeyboardButton(text='💻/📦',callback_data='Products_Affected')
-        b2 = InlineKeyboardButton(text='📖 Ref', callback_data='References')
-        b3 = InlineKeyboardButton(text='ℹ️', callback_data='More_Info')
-        b4 = InlineKeyboardButton(text='🔍 Sploitus PoC', callback_data='Available_Exploits_With_Sploitus')
-        b5 = InlineKeyboardButton(text='🔍 Github PoC ?', callback_data='Available_Exploits_Only_With_Github')
-        b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
-        markup.add(b1, b2, b3, b4, b5, b6)
-        bot.reply_to(message, cveSearch(reFormatedCVE,0), reply_markup=markup)
+        cve_result = cveSearch(reFormatedCVE,0)
+        if cve_result == CVE_NOT_FOUND : 
+            bot.reply_to(message, CVE_NOT_FOUND)
+        else : 
+            markup = InlineKeyboardMarkup()
+            b1 = InlineKeyboardButton(text='💻/📦',callback_data='Products_Affected')
+            b2 = InlineKeyboardButton(text='📖 Ref', callback_data='References')
+            b3 = InlineKeyboardButton(text='ℹ️', callback_data='More_Info')
+            b4 = InlineKeyboardButton(text='🔍 Sploitus PoC', callback_data='Available_Exploits_With_Sploitus')
+            b5 = InlineKeyboardButton(text='🔍 Github PoC ?', callback_data='Available_Exploits_Only_With_Github')
+            b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
+            markup.add(b1, b2, b3, b4, b5, b6)
+            bot.reply_to(message, cveSearch(reFormatedCVE,0), reply_markup=markup)
         
 @bot.message_handler(regexp="^/Cve@*")
 def catch_cve_on_the_fly(message):
@@ -214,7 +219,7 @@ def which_reply(message):
             markup.add(b1, b2, b3, b4)
             loading = bot.reply_to(message,"⏳")
             cve = cveTodaySortedByVendor(message.text)
-            if cve == "No CVE(s) have been registered today for this vendor/product." :
+            if cve == NO_CVE_HAVE_BEEN_REGISTERED_TODAY_FOR+""+message.text :
                 bot.edit_message_text(message_id=loading.id,chat_id=loading.chat.id, text=cve)
             elif cve == VENDOR_OR_PRODUCT_NOT_FOUND :
                 bot.edit_message_text(message_id=loading.id,chat_id=loading.chat.id, text=cve)
