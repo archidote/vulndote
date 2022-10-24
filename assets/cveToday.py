@@ -73,7 +73,7 @@ def cveTodaySortedByVendorAndCVSS(vendor,cvss) :  # Ok
     data = response.json() 
     
     if "message" in data : 
-        return "Vendor/Product has'nt been found."
+        return "Vendor/Product has not been found."
     else : 
         today = now = datetime.now()
         today = now.strftime("%Y-%m-%d")

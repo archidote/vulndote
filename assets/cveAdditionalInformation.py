@@ -35,7 +35,6 @@ def cvssScale(cve):
     
     response = session.get('https://www.opencve.io/api/cve/'+cve+'')
     data = response.json() 
-    print (data)
     if data["cvss"]["v2"] != None or data["cvss"]["v3"] != None : # Sometimes a CVSS score could not be fetched, if the CVE has been revoked or rejected for any reasons
         if data["cvss"]["v3"] != None :
             if data["cvss"]["v3"] < 4 : 
@@ -63,7 +62,6 @@ def cveReferences(cve) :
     response = session.get('https://www.opencve.io/api/cve/'+cve+'')
     data = response.json() 
 
-    print (data)
     if "message" in data : 
         return CVE_NOT_FOUND
         
