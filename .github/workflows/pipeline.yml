@@ -32,8 +32,8 @@ jobs:
           if_key_exists: ignore
       - name : Pull
         run : | 
-          ssh ${{ secrets.USERNAME }}@${{ secrets.IP }} '/usr/bin/screen -X -S vulndote quit'
-          ssh ${{ secrets.USERNAME }}@${{ secrets.IP }}'
+          ssh -p 4242 ${{ secrets.USERNAME }}@${{ secrets.IP }} '/usr/bin/screen -X -S vulndote quit'
+          ssh -p 4242 ${{ secrets.USERNAME }}@${{ secrets.IP }}'
           cd /home/${{ secrets.USERNAME }}/vulndoote
           /usr/bin/git pull origin master
           /usr/bin/screen -S vulndote -d -m /usr/bin/python3 /home/${{ secrets.USERNAME }}/vulndoote/run.py'
