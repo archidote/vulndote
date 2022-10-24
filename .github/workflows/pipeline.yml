@@ -35,5 +35,5 @@ jobs:
           ssh -p 4242 ${{ secrets.USERNAME }}@${{ secrets.IP }} '/usr/bin/screen -X -S vulndote quit'
           ssh -p 4242 ${{ secrets.USERNAME }}@${{ secrets.IP }} '
           cd /home/${{ secrets.USERNAME }}/vulndote
-          /usr/bin/git pull origin main
+          /usr/bin/git pull origin master
           /usr/bin/screen -S vulndote -d -m /usr/bin/python3 /home/${{ secrets.USERNAME }}/vulndote/index.py'
