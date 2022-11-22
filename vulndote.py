@@ -17,7 +17,7 @@ bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN,parse_mode="HTML")
 
 help = """
 
-ℹ️ HEL 🛟 Features that you can use :
+ℹ️ HELP 🛟 Features that you can use :
 
 Information about a CVE - Ex : CVE-2021-4034
 /today
