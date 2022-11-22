@@ -32,8 +32,8 @@ jobs:
           if_key_exists: ignore
       - name : Pull
         run : | 
-          ssh -p 4242 ${{ secrets.USERNAME }}@${{ secrets.IP }} '/usr/bin/screen -X -S vulndote quit'
-          ssh -p 4242 ${{ secrets.USERNAME }}@${{ secrets.IP }} '
+          ssh -p 4242 ${{ secrets.USERNAME }}@${{ secrets.IP }}'
+          tmux kill-session -t vulndote
           cd /home/${{ secrets.USERNAME }}/vulndote
-          /usr/bin/git pull origin master
-          /usr/bin/screen -S vulndote -d -m /usr/bin/python3 /home/${{ secrets.USERNAME }}/vulndote/run.py'
+          git pull origin master
+          tmux new-session -d -s weathergilant 'python3 /home/${{ secrets.USERNAME }}/vulndote/vulndote.py''
