@@ -32,7 +32,7 @@ jobs:
           if_key_exists: ignore
       - name : Pull
         run : | 
-          ssh -p 4242 ${{ secrets.USERNAME }}@${{ secrets.IP }}'
+          ssh -p 4242 ${{ secrets.USERNAME }}@${{ secrets.IP }} '
           tmux kill-session -t vulndote
           cd /home/${{ secrets.USERNAME }}/vulndote
           git pull origin master
