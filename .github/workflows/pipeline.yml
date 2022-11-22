@@ -36,4 +36,4 @@ jobs:
           tmux kill-session -t vulndote
           cd /home/${{ secrets.USERNAME }}/vulndote
           git pull origin master
-          tmux new-session -d -s weathergilant 'python3 /home/${{ secrets.USERNAME }}/vulndote/vulndote.py''
+          tmux new-session -d -s vulndote 'python3 /home/${{ secrets.USERNAME }}/vulndote/vulndote.py''
