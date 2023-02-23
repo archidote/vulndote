@@ -1,3 +1,5 @@
 .env
 __pycache__
 assets/__pycache__
+test.py
+assets/logs.log

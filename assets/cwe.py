@@ -1,8 +1,11 @@
 import requests
+from assets.controller import *
 from assets.controller import * 
 from bs4 import BeautifulSoup
 
-def cweSortedByYear(year) : # Integer  
+def cweSortedByYear(year) : 
+    
+    
     
     previousYear = year - 1
     year = str(year)
@@ -50,3 +53,16 @@ def cweSortedByYear(year) : # Integer
         output += "\nCheck CWE for the previous year ? /Cwe@"+str(previousYear)+"\n"
     
     return output
+
+def cwe_info(cwe) : 
+    
+    response = session.get('https://www.opencve.io/api/cwe/'+cwe+'')
+    data = response.json()  
+    if "id" in data : 
+        _return = "" 
+        _return += "ID : "+data["id"]+"\n"
+        _return += "Name : "+data["name"]+"\n"
+        _return += "Description : "+data["description"]+"\n"
+        return _return
+    else :
+        return "CWE does not exist."

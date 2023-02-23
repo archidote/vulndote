@@ -11,6 +11,8 @@ from assets.functions import *
 from assets.cvePoCExploits import * 
 from assets.cveAdditionalInformation import * 
 from assets.favorite import * 
+from assets.send_message import *
+from assets.cve_alert import *
 from telebot.types import *
 
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN,parse_mode="HTML")
@@ -53,10 +55,9 @@ def cve_code_input(message):
             b1 = InlineKeyboardButton(text='💻/📦',callback_data='Products_Affected')
             b2 = InlineKeyboardButton(text='📖 Ref', callback_data='References')
             b3 = InlineKeyboardButton(text='ℹ️', callback_data='More_Info')
-            b4 = InlineKeyboardButton(text='🔍 Sploitus PoC', callback_data='Available_Exploits_With_Sploitus')
-            b5 = InlineKeyboardButton(text='🔍 Github PoC ?', callback_data='Available_Exploits_Only_With_Github')
-            b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
-            markup.add(b1, b2, b3, b4, b5, b6)
+            b4 = InlineKeyboardButton(text='🔍 Search for PoC ?', callback_data='Available_Exploits_Only_With_Github')
+            b5 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
+            markup.add(b1, b2, b3, b4, b5)
             bot.reply_to(message, cveSearch(reFormatedCVE,0), reply_markup=markup)
         
 @bot.message_handler(regexp="^/Cve@*")
@@ -69,10 +70,9 @@ def catch_cve_on_the_fly(message):
         b1 = InlineKeyboardButton(text='💻/📦',callback_data='Products_Affected')
         b2 = InlineKeyboardButton(text='📖 Ref', callback_data='References')
         b3 = InlineKeyboardButton(text='ℹ️', callback_data='More_Info')
-        b4 = InlineKeyboardButton(text='🔍 Sploitus PoC', callback_data='Available_Exploits_With_Sploitus')
-        b5 = InlineKeyboardButton(text='🔍 Github PoC ?', callback_data='Available_Exploits_Only_With_Github')
-        b6 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
-        markup.add(b1, b2, b3, b4, b5, b6)
+        b4 = InlineKeyboardButton(text='🔍 Search for PoC ?', callback_data='Available_Exploits_Only_With_Github')
+        b5 = InlineKeyboardButton(text='⭐', callback_data='Favorite')
+        markup.add(b1, b2, b3, b4, b5)
         bot.reply_to(message, cveSearch(reFormatedCVE,0), reply_markup=markup)
 
        
@@ -167,39 +167,6 @@ def unFavOntheFly(message):
 def terms(message):
 	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 	bot.reply_to(message,terminology(), reply_markup=markup, disable_web_page_preview=True)
- 
-def checkEveryHourNewCveForSubsribedUsers():
-    print ("Execution of sendAlertAutoVendor()"+todayHS)
-    cursor.execute(f"""SELECT * FROM subscriber_vendor_alerts """)
-    rows = cursor.fetchall()
-            
-    for row in rows:
-        
-        chat_id = row[0]
-        vendor = row[1]
-        
-        response = session.get('https://www.opencve.io/api/cve?vendor='+row[1])
-        data = response.json() 
-        
-        CVEs = ""
-        
-        for i in range(len(data)):
-            if today in formatDate(data[i]["updated_at"]):
-                newCVEs = "📍 New CVE for :"+vendor+"\n\n"
-                if data[i]["id"] not in row[2]:
-                    print ("New CVE"+data[i]["id"]+"has been fetched for"+vendor+" - user id :"+str(chat_id))
-                    CVEs += data[i]["id"]+","
-                    newCVEs += cveSearch(data[i]["id"],1)
-                    newCVEs = summaryRegex(newCVEs) # Escape other chars than common HTML special chars like &amp;
-                    bot.send_message(chat_id,newCVEs,disable_web_page_preview=True)
-                else : 
-                    print ("CVE"+data[i]["id"]+"has been ALREADY fetched for"+vendor+" - user id :"+str(chat_id))
-                    CVEs += data[i]["id"]+","
-                cursor.execute(f"""UPDATE subscriber_vendor_alerts SET api_request = '{CVEs}', refresh_date = '{today}' WHERE chat_id = {chat_id};""")
-            else : 
-                print ("No new CVE for :"+vendor+" today - user id :"+str(chat_id))
-                
-    dbConnection.commit() 
 
 ###################################################################################################################
 #                                             FETCH ANSWERS OF AN /action                                         #
@@ -285,15 +252,6 @@ def callback_inline(call):
             reply_markup=call.message.reply_markup,
         )
         
-    if call.data == "Available_Exploits_With_Sploitus":
-        bot.answer_callback_query(call.id, "Loading...")
-        bot.edit_message_text(
-            message_id=call.message.id,
-            chat_id=call.message.chat.id,
-            text=(searchPoCExploitWithSploitus(cveReformated(call.message.reply_to_message.text))),
-            reply_markup=call.message.reply_markup,disable_web_page_preview=True
-        )	
-        
     if call.data == "Available_Exploits_Only_With_Github":
         bot.answer_callback_query(call.id, "Loading...")
         bot.edit_message_text(
@@ -366,7 +324,7 @@ def callback_inline(call):
 ###################################################################################################################
 #           SCHEDULE THE AUTO FETCHING API TO GET THE LATEST CVE FROM THE SUBSCRIBER'S VENDOR PREFERENCE          #
 ###################################################################################################################  
-schedule.every(30).minutes.do(lambda: checkEveryHourNewCveForSubsribedUsers())
+schedule.every(10).seconds.do(lambda: check_for_new_cve())
 
 def schedule_api_fetching(): 
     while True:

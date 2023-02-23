@@ -108,7 +108,8 @@ def moreInfo(cve) :
         if data["cvss"]["v3"] :
  
             output = "<b>CVE</b> : "+data["id"]+"\n"
-            output +=  "<b>CVSS version</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["version"]+"\n\n"
+            output +=  "<b>CVSS version</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["version"]+"\n"
+            output +=  "<b>CWE version</b> : "+data["cwes"][0]+"\n\n"
             output +=  "<b>Attack Vector</b> : "+data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackVector"]+"\n"
             output +=  "<b>Attack complexity </b> : "+str(data["raw_nvd_data"]["impact"]["baseMetricV3"]["cvssV3"]["attackComplexity"])+"\n"
             output +=  "<b>Raw CVSS Vector</b> : \n\n"

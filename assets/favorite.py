@@ -29,6 +29,7 @@ def listFavoriteCVE(chat_id,t) :
     
     if t == "Fav_Sorted_By_This_Year" : 
         Datetime = datetime.today().strftime('%Y')
+        print (Datetime)
         return checkRowForFavorite(rows,Datetime)
     elif t == "Fav_Sorted_By_This_Month" :
         Datetime = datetime.today().strftime('%Y-%m')
