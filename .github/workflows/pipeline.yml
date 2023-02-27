@@ -35,5 +35,5 @@ jobs:
           ssh -p 4242 ${{ secrets.USERNAME }}@${{ secrets.IP }} '
           tmux kill-session -t vulndote
           cd /home/${{ secrets.USERNAME }}/vulndote
-          git pull origin master
-          tmux new-session -d -s vulndote 'python3 /home/${{ secrets.USERNAME }}/vulndote/vulndote.py''
+          git pull origin master'
+          ssh -p 4242 ${{ secrets.USERNAME }}@${{ secrets.IP }} "tmux new-session -d -s vulndote -c /home/${{ secrets.USERNAME }}/vulndote 'source activate_virtual_env.sh'"
