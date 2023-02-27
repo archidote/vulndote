@@ -324,7 +324,7 @@ def callback_inline(call):
 ###################################################################################################################
 #           SCHEDULE THE AUTO FETCHING API TO GET THE LATEST CVE FROM THE SUBSCRIBER'S VENDOR PREFERENCE          #
 ###################################################################################################################  
-schedule.every(10).seconds.do(lambda: check_for_new_cve())
+schedule.every(60).to(120).seconds.do(lambda: check_for_new_cve())
 
 def schedule_api_fetching(): 
     while True:

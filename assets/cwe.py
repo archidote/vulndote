@@ -5,8 +5,6 @@ from bs4 import BeautifulSoup
 
 def cweSortedByYear(year) : 
     
-    
-    
     previousYear = year - 1
     year = str(year)
     
